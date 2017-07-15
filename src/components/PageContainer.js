@@ -2,6 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
+import Button from 'antd/lib/button';
+import Table from 'antd/lib/table';
+import 'antd/lib/button/style/css';
+import 'antd/lib/table/style/css';
 
 import WordCard from './WordCard/WordCard';
 import PageControl from './PageControl/PageControl';
@@ -43,13 +47,67 @@ class PageContainer extends React.Component {
 		}
 	}
 
+  handleTableDeleteSelect = (idArray) => {
+    this.idsToDelete = idArray;
+  }
+
   handlePageChange = pageNumber => {
     pageNumber = pageNumber < 1 ? 1 : pageNumber;
     pageNumber = pageNumber > this.props.numberOfPages ? this.props.numberOfPages : pageNumber;
     this.props.onSetPageNumber(pageNumber);
   }
-
+  //------------- antd Table prep functions ---------------
+  formatDataForTable = data => {
+    let dataSource = data.map(wordObj => ({
+      key: wordObj.id,
+      word: wordObj.word,
+      syllables: wordObj.syllables,
+      partOfSpeech: wordObj.partOfSpeech,
+      diacritic: wordObj.diacritic,
+      isNewWord: wordObj.isNewWord
+    }));
+    return dataSource;
+  }
+  setupTableColumns = () => {
+    const columns = [{
+      title: 'Word',
+      dataIndex: 'word',
+      key: 'word'
+    }, {
+      title: 'Syllables',
+      dataIndex: 'syllables',
+      key: 'syllables'
+    }, {
+      title: 'Part of Speech',
+      dataIndex: 'partOfSpeech',
+      key: 'partOfSpeech'
+    }, {
+      title: 'Diacritic',
+      dataIndex: 'diacritic',
+      key: 'diacritic'
+    }, {
+      title: 'New Word?',
+      dataIndex: 'isNewWord',
+      key: 'isNewWord'
+    }];
+    return columns;
+  }
+  getRowConfig = () => {
+    return {
+      type: 'checkbox',
+      onSelect: (record, selected, selectedRows) => {
+        //create array of ids to delete
+        let rowsToDelete = selectedRows.map(row => row.key);
+        this.handleTableDeleteSelect(rowsToDelete);
+      }
+    }
+  }
+  //----------- end Table prep functions ------------------------
   render() {
+    //--create antd needed props
+    const tableData = this.formatDataForTable(this.props.pageInfo.pageData);
+    const tableColumns = this.setupTableColumns();
+    const rowSelectionConfig = this.getRowConfig();
     let { pageData, numberOfPages } = this.props.pageInfo;
     return (
       <div>
@@ -64,7 +122,14 @@ class PageContainer extends React.Component {
           />
 				<button className="button primary" onClick={() => this.props.onDeleteWords(this.props.wordListName, this.idsToDelete)}>Delete Selected</button>
         </PageControlSearchContainer>
-        <WordCardDiv>
+
+        <Table
+          dataSource={tableData}
+          columns={tableColumns}
+          pagination={false}
+          rowSelection={rowSelectionConfig}
+        />
+        {/* <WordCardDiv>
           {pageData.map(wordObj => {
               return (
 								<WordCard
@@ -74,7 +139,7 @@ class PageContainer extends React.Component {
 								/>
 								)
             })}
-        </WordCardDiv>
+        </WordCardDiv> */}
       </div>
     );
   }

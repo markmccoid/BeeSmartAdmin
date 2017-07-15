@@ -33,19 +33,19 @@
  body {
  	height: 100%;
   width: auto;
- 	margin: 0 20em;
+ 	margin: 0;
 	font-family: Helvetica;
  	background: $application-background;
  	-webkit-font-smoothing: antialiased;
  }
 
- @media (max-width: 1485px) {
-	 body {
-		 margin: 0 10em;
-	 }
- }
- @media (max-width: 900px) {
-	 body {
-		 margin: 0 5em;
-	 }
- }
+ // @media (max-width: 1485px) {
+	//  body {
+	// 	 margin: 0 10em;
+	//  }
+ // }
+ // @media (max-width: 900px) {
+	//  body {
+	// 	 margin: 0 5em;
+	//  }
+ // }

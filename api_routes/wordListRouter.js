@@ -1,7 +1,7 @@
 const wordListRouter = require('express').Router();
 const fs = require('fs');
 const path = require('path');
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 const _ = require('lodash');
 
 const WORD_LIST_INDEX = path.join(__dirname, '../', './datafiles/wordListIndex.json');
