@@ -3,3 +3,4 @@ export * from './appStateActions';
 export * from './wordListIndexActions';
 export * from './currWordListActions';
 export * from './currPageActions';
+export * from './settingsActions';

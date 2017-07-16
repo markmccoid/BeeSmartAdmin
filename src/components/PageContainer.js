@@ -25,6 +25,9 @@ class PageContainer extends React.Component {
   constructor(props) {
     super(props);
 		this.idsToDelete = [];
+    this.state = {
+      deleteActive: false
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,7 +51,16 @@ class PageContainer extends React.Component {
 	}
 
   handleTableDeleteSelect = (idArray) => {
+    //load the ids to delete into class variable
     this.idsToDelete = idArray;
+    //set the state to alert component that delete button should be active
+    if (this.idsToDelete.length > 0 && !this.state.deleteActive) {
+      this.setState({deleteActive: true});
+    }
+    if (this.idsToDelete.length === 0) {
+      this.setState({deleteActive: false});
+    }
+
   }
 
   handlePageChange = pageNumber => {
@@ -96,6 +108,11 @@ class PageContainer extends React.Component {
     return {
       type: 'checkbox',
       onSelect: (record, selected, selectedRows) => {
+          //create array of ids to delete
+          let rowsToDelete = selectedRows.map(row => row.key);
+          this.handleTableDeleteSelect(rowsToDelete);
+        },
+      onSelectAll: (selected, selectedRows, changeRows) => {
         //create array of ids to delete
         let rowsToDelete = selectedRows.map(row => row.key);
         this.handleTableDeleteSelect(rowsToDelete);
@@ -120,13 +137,15 @@ class PageContainer extends React.Component {
             searchText={this.props.searchText}
             showNewWordsOnly={this.props.showNewWordsOnly}
           />
-				<button className="button primary" onClick={() => this.props.onDeleteWords(this.props.wordListName, this.idsToDelete)}>Delete Selected</button>
+				<button className={this.state.deleteActive ? "button primary" : "button primary disabled"} onClick={() => this.props.onDeleteWords(this.props.wordListName, this.idsToDelete)}>Delete Selected</button>
         </PageControlSearchContainer>
 
         <Table
           dataSource={tableData}
           columns={tableColumns}
           pagination={false}
+          size='middle'
+          bordered
           rowSelection={rowSelectionConfig}
         />
         {/* <WordCardDiv>
@@ -140,6 +159,9 @@ class PageContainer extends React.Component {
 								)
             })}
         </WordCardDiv> */}
+        <PageControlSearchContainer>
+          <PageControl pageNumber={this.props.pageNumber} onPageChange={this.handlePageChange} />
+        </PageControlSearchContainer>
       </div>
     );
   }
