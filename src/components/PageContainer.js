@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Route, Link } from 'react-router-dom';
 import _ from 'lodash';
 import Button from 'antd/lib/button';
+import Radio from 'antd/lib/Radio';
 import Table from 'antd/lib/table';
 import 'antd/lib/button/style/css';
 import 'antd/lib/table/style/css';
 
-import WordCard from './WordCard/WordCard';
+
+import WordDisplay from './WordDisplay/WordDisplay';
 import PageControl from './PageControl/PageControl';
 import Search from './Search';
 
@@ -26,7 +29,8 @@ class PageContainer extends React.Component {
     super(props);
 		this.idsToDelete = [];
     this.state = {
-      deleteActive: false
+      deleteActive: false,
+      viewType: "table1"
     }
   }
 
@@ -68,68 +72,23 @@ class PageContainer extends React.Component {
     pageNumber = pageNumber > this.props.numberOfPages ? this.props.numberOfPages : pageNumber;
     this.props.onSetPageNumber(pageNumber);
   }
-  //------------- antd Table prep functions ---------------
-  formatDataForTable = data => {
-    let dataSource = data.map(wordObj => ({
-      key: wordObj.id,
-      word: wordObj.word,
-      syllables: wordObj.syllables,
-      partOfSpeech: wordObj.partOfSpeech,
-      diacritic: wordObj.diacritic,
-      isNewWord: wordObj.isNewWord
-    }));
-    return dataSource;
-  }
-  setupTableColumns = () => {
-    const columns = [{
-      title: 'Word',
-      dataIndex: 'word',
-      key: 'word'
-    }, {
-      title: 'Syllables',
-      dataIndex: 'syllables',
-      key: 'syllables'
-    }, {
-      title: 'Part of Speech',
-      dataIndex: 'partOfSpeech',
-      key: 'partOfSpeech'
-    }, {
-      title: 'Diacritic',
-      dataIndex: 'diacritic',
-      key: 'diacritic'
-    }, {
-      title: 'New Word?',
-      dataIndex: 'isNewWord',
-      key: 'isNewWord'
-    }];
-    return columns;
-  }
-  getRowConfig = () => {
-    return {
-      type: 'checkbox',
-      onSelect: (record, selected, selectedRows) => {
-          //create array of ids to delete
-          let rowsToDelete = selectedRows.map(row => row.key);
-          this.handleTableDeleteSelect(rowsToDelete);
-        },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-        //create array of ids to delete
-        let rowsToDelete = selectedRows.map(row => row.key);
-        this.handleTableDeleteSelect(rowsToDelete);
-      }
-    }
-  }
-  //----------- end Table prep functions ------------------------
   render() {
-    //--create antd needed props
-    const tableData = this.formatDataForTable(this.props.pageInfo.pageData);
-    const tableColumns = this.setupTableColumns();
-    const rowSelectionConfig = this.getRowConfig();
     let { pageData, numberOfPages } = this.props.pageInfo;
     return (
       <div>
         <h4>{this.props.wordListName}</h4>
         <h6>{`Number Of Pages - ${numberOfPages}`}</h6>
+        <Radio.Group value={this.state.viewType} onChange={(e) => this.setState({ viewType: e.target.value })}>
+          <Radio.Button value="card">Cards</Radio.Button>
+          <Radio.Button value="table1">Table 1</Radio.Button>
+          <Radio.Button value="table2">Table 2</Radio.Button>
+        </Radio.Group>
+        <Radio.Group value={this.state.viewType} onChange={(e) => <Link to="/table2"/>}>
+          <Radio.Button value="card">Cards</Radio.Button>
+          <Radio.Button value="table1">Table 1</Radio.Button>
+          <Radio.Button value="table2">Table 2</Radio.Button>
+        </Radio.Group>
+        <Link to="/table2">Table2</Link>
         <PageControlSearchContainer>
         	<PageControl pageNumber={this.props.pageNumber} onPageChange={this.handlePageChange} />
         	<Search
@@ -138,16 +97,17 @@ class PageContainer extends React.Component {
             showNewWordsOnly={this.props.showNewWordsOnly}
           />
 				<button className={this.state.deleteActive ? "button primary" : "button primary disabled"} onClick={() => this.props.onDeleteWords(this.props.wordListName, this.idsToDelete)}>Delete Selected</button>
-        </PageControlSearchContainer>
 
-        <Table
-          dataSource={tableData}
-          columns={tableColumns}
-          pagination={false}
-          size='middle'
-          bordered
-          rowSelection={rowSelectionConfig}
+        </PageControlSearchContainer>
+        <Route path="/table2"
+          render={() => {console.log("here"); <Table2 pageData={pageData} onDeleteToggle={this.handleTableDeleteSelect} />}}
         />
+        {/* <WordDisplay
+          pageData={pageData}
+          onDeleteToggle={this.handleTableDeleteSelect}
+          viewType={this.state.viewType}
+        /> */}
+
         {/* <WordCardDiv>
           {pageData.map(wordObj => {
               return (
