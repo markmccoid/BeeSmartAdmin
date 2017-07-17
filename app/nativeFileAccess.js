@@ -52,10 +52,12 @@ const getWordList = wordListName => {
 //-wordListName file.
 const deleteWordsFromList = (wordListName, idsToDelete) => {
   wordListName = getLocalFile(wordListName);
+  console.log('idstodelete', idsToDelete);
   return readFilePromise(`${wordListName}.json`)
     .then(data => {
     let wordList = _.sortBy(JSON.parse(data), 'word');
     let newWordList = _.filter(wordList, obj => {
+      console.log(obj.ids);
       //want to remove any words with ids that are in the array "idsToDelete"
       //thus if indexOf returns -1, it means the id we are checking is NOT in the delete list
       return (_.indexOf(idsToDelete, obj.id) === -1);
@@ -66,6 +68,7 @@ const deleteWordsFromList = (wordListName, idsToDelete) => {
       }
       console.log(`${wordListName}.json written successfully!`);
     });
+    return newWordList;
   });
 };
 

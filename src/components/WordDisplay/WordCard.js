@@ -38,9 +38,6 @@ const WordCard = (props) => {
 	const borderColor= 'chocolate';
   return (
     <CardDiv isNewWord={wordObj.isNewWord}>
-      <DeleteContainer>
-        <CheckboxStyled onChange={e => props.onDeleteToggle(wordObj.id, e.target.checked)}>Delete</CheckboxStyled>
-      </DeleteContainer>
       <CardGroup>
         <TextWithLabel label="Word" borderColor={borderColor}>{wordObj.word}</TextWithLabel>
         <TextWithLabel label="Diacritic" borderColor={borderColor}>{wordObj.diacritic}</TextWithLabel>

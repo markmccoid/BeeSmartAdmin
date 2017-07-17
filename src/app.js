@@ -17,7 +17,7 @@ import Main from './components/Main';
 
 //app scss - webpack will create a sass-styles.css file in pubic directory
 require('./styles/app.scss');
-
+import 'react-table/react-table.css';
 //--This creates the store that will be passed to the Provider component
 var store = require('./store/configureStore').configure();
 

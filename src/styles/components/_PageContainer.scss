@@ -1,0 +1,11 @@
+//--Changing background color on antd components usually will require !important as
+//--the class here is injected before the antd class sets background color
+.new-word {
+  background-color: #b2fbb7 !important;
+}
+.row-selected {
+  background-color: #ff8e8e !important;
+}
+.ant-table-row {
+  font-size: 18px;
+}
