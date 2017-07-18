@@ -15,10 +15,10 @@ const WordCardDiv = styled.div`
 const formatDataForTable = data => {
   let dataSource = data.map(wordObj => ({
     key: wordObj.id,
-    word: wordObj.word,
     syllables: wordObj.syllables,
     partOfSpeech: wordObj.partOfSpeech,
     diacritic: wordObj.diacritic,
+    origin: wordObj.origin,
     isNewWord: wordObj.isNewWord
   }));
   return dataSource;
@@ -26,26 +26,26 @@ const formatDataForTable = data => {
 const setupTableColumns = () => {
   let newWordClass = ''
   const columns = [{
-    title: 'Word',
-    dataIndex: 'word',
-    key: 'word',
-    width: 275
-  }, {
     title: 'Syllables',
     dataIndex: 'syllables',
     key: 'syllables',
-    width: 300
+    width: 250
   }, {
     title: 'Part of Speech',
     dataIndex: 'partOfSpeech',
     key: 'partOfSpeech',
-    width: 300
+    width: 250
   }, {
     title: 'Diacritic',
     dataIndex: 'diacritic',
     key: 'diacritic',
-    width: 300
+    width: 250
   }, {
+    title: 'Origin',
+    dataIndex: 'origin',
+    key: 'origin',
+    width: 400
+  },{
     title: 'New Word?',
     dataIndex: 'isNewWord',
     key: 'isNewWord',

@@ -17,8 +17,11 @@ console.log(process.env.NODE_ENV);
 	}
 
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600
+    width: 1280,
+    height: 960,
+		title: "Bee Smart",
+		icon: path.join(__dirname, 'assets/icon.ico'),
+		webPreferences : { backgroundThrottling: false }
   });
 
   mainWindow.loadURL(`file://${__dirname}/public/index.html`);
