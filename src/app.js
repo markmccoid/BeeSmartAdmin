@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { HashRouter as Router } from 'react-router-dom';
-
+import { startLoadSettings } from './actions';
 import Main from './components/Main';
 
 
@@ -17,10 +17,10 @@ import Main from './components/Main';
 
 //app scss - webpack will create a sass-styles.css file in pubic directory
 require('./styles/app.scss');
-import 'react-table/react-table.css';
 //--This creates the store that will be passed to the Provider component
 var store = require('./store/configureStore').configure();
-
+//--Load the settings file
+store.dispatch(startLoadSettings());
 //--Ant Design css load
 // require('/antd/dist/antd.min.css');
 

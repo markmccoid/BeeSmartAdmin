@@ -4,6 +4,17 @@ import moment from 'moment';
 const nfa = window.require('../app/nativeFileAccess');
 const API_URL = 'http://localhost:3001';
 
+export const getSettings = () => {
+	return nfa.getSettings()
+		.then(response => {
+			return response;
+		});
+};
+export const saveWordsPerPage = (wordsPerPage) => {
+	return nfa.saveWordsPerPage(wordsPerPage)
+		.then(response => response);
+};
+
 export const getWordListIndex = () => {
 	return nfa.getWordListIndex()
 		.then(response => {

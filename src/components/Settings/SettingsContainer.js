@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { setWordsPerPage } from '../../actions';
+import { startSetWordsPerPage } from '../../actions';
 
 const OuterDiv = styled.div`
     display: flex;
@@ -48,6 +48,12 @@ class SettingsContainer extends React.Component {
           type="text"
           value={this.state.wordsPerPageInput}
           onChange={(e) => this.setState({ wordsPerPageInput: e.target.value })}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              this.props.setWordsPerPage(parseInt(this.state.wordsPerPageInput));
+              this.setState({wordsPerPageInput: ''});
+            }
+          }}
         />
         <Button
           className="button primary"
@@ -66,4 +72,4 @@ const mapStateToProps = state => {
     settings: state.settings
   }
 }
-export default connect(mapStateToProps, {setWordsPerPage: setWordsPerPage})(SettingsContainer);
+export default connect(mapStateToProps, {setWordsPerPage: startSetWordsPerPage})(SettingsContainer);

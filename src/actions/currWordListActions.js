@@ -17,16 +17,16 @@ export const loadWordList = (wordList) => {
 	}
 };
 
-export const startLoadWordList = wordList => {
+export const startLoadWordList = wordListName => {
 	return dispatch => {
 		//Set the appState to the word list selected
-		dispatch(setSelectedWordList(wordList));
+		dispatch(setSelectedWordList(wordListName));
 		//reset page number to 1
 		dispatch({type: SET_PAGE_NUMBER, pageNumber: 1})
 		//Set the loading flag for the wordlist
 		dispatch({type: WORD_LIST_LOADING});
 		//Get list of Applications in the QVVariables.json file on server
-		const request = api.getWordList(wordList);
+		const request = api.getWordList(wordListName);
 			request.then(data => {
 				dispatch(loadWordList(data));
 				dispatch({type: WORD_LIST_LOAD_SUCCESS});
@@ -40,20 +40,20 @@ export const startLoadWordList = wordList => {
 //===============================
 //-DELETE_WORDS
 //===============================
-export const deleteWords = (wordList) => {
+export const deleteWords = (wordListName) => {
 	//Once words have been deleted from server file we could
 	//remove them from the list already in redux store OR
 	//Just tell it to reload the word list.
 	return {
 		type: LOAD_WORD_LIST,
-		wordList
+		wordListName
 	}
 };
-export const startDeleteWords = (wordList, idsToDelete) => {
+export const startDeleteWords = (wordListName, idsToDelete) => {
 	return dispatch => {
-		api.deleteWordsFromList(wordList, idsToDelete)
+		api.deleteWordsFromList(wordListName, idsToDelete)
 			.then(data => {
-				dispatch(startLoadWordList(wordList));
+				dispatch(startLoadWordList(wordListName));
 				console.log('delete words thunk', data);
 			});
 	};

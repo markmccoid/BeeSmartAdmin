@@ -15,4 +15,5 @@ export const SAVE_PAGE_DATA = 'SAVE_PAGE_DATA';
 export const SET_PAGE_NUMBER = 'SET_PAGE_NUMBER';
 
 //----Settings ----//
+export const LOAD_INITIAL_SETTINGS = 'LOAD_INITIAL_SETTINGS';
 export const SET_WORDS_PER_PAGE = 'SET_WORDS_PER_PAGE';

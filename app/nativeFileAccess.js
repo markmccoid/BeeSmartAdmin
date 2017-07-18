@@ -29,7 +29,32 @@ const getLocalFile = (dataFile) => {
 };
 
 const WORD_LIST_INDEX = 'wordListIndex.json';
+const SETTINGS = 'settings.json';
 
+//--------------------
+//-Returns the settings object
+const getSettings = () => {
+  return readFilePromise(getLocalFile(SETTINGS))
+    .then(data => {
+      return JSON.parse(data);
+    });
+};
+
+const saveWordsPerPage = wordsPerPage => {
+  console.log('in Savewpp')
+  return readFilePromise(getLocalFile(SETTINGS))
+    .then(data => {
+      let settings = JSON.parse(data);
+      let updatedSettings = Object.assign({}, settings, {wordsPerPage: wordsPerPage});
+      fs.writeFile(getLocalFile(SETTINGS), JSON.stringify(updatedSettings), err => {
+        if (err) {
+          console.log(`Error writing settings file-wordPerPage`, err);
+          return {status: 400, err};
+        }
+        return {status: 200}
+      });
+    });
+}
 //--------------------
 //-Returns the wordListIndex array of objects found in wordListIndex.json
 const getWordListIndex = () => {
@@ -52,7 +77,6 @@ const getWordList = wordListName => {
 //-wordListName file.
 const deleteWordsFromList = (wordListName, idsToDelete) => {
   wordListName = getLocalFile(wordListName);
-  console.log('idstodelete', idsToDelete);
   return readFilePromise(`${wordListName}.json`)
     .then(data => {
     let wordList = _.sortBy(JSON.parse(data), 'word');
@@ -76,5 +100,7 @@ const deleteWordsFromList = (wordListName, idsToDelete) => {
 module.exports = {
 	getWordListIndex,
   getWordList,
-  deleteWordsFromList
+  deleteWordsFromList,
+  getSettings,
+  saveWordsPerPage
 }

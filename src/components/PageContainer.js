@@ -91,25 +91,7 @@ class PageContainer extends React.Component {
               })}
           </WordCardDiv>
         }
-
-
-        {/* <WordDisplay
-          pageData={pageData}
-          onDeleteToggle={this.handleTableDeleteSelect}
-          viewType={this.state.viewType}
-        /> */}
-
-        {/* <WordCardDiv>
-          {pageData.map(wordObj => {
-              return (
-								<WordCard
-									key={wordObj.id}
-									wordObj={wordObj}
-									onDeleteToggle={this.handleDeleteToggle}
-								/>
-								)
-            })}
-        </WordCardDiv> */}
+        <br />
         <PageControlSearchContainer>
           <PageControl pageNumber={this.props.pageNumber} onPageChange={this.handlePageChange} />
         </PageControlSearchContainer>
