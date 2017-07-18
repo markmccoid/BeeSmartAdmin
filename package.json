@@ -2,7 +2,6 @@
   "name": "beesmartadmin",
   "version": "1.0.0",
   "description": "Bee Smart Admin program",
-  "author": "Mark McCoid",
   "main": "index.js",
   "scripts": {
     "start": "webpack -w",
@@ -26,7 +25,7 @@
       "icon":"./build/icon.ico"
     }
   },
-  "author": "",
+  "author": "Mark McCoid",
   "license": "ISC",
   "devDependencies": {
     "alertifyjs": "^1.10.0",
