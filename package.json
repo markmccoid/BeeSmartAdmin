@@ -2,7 +2,7 @@
   "name": "beesmartadmin",
   "version": "1.0.0",
   "description": "Bee Smart Admin program",
-  "author": "Mark McCoid",
+  "author": "",
   "main": "index.js",
   "scripts": {
     "start": "webpack -w",
@@ -20,13 +20,12 @@
     "directories": {
       "buildResources": "./assets",
       "output": "./dist"
-  },
-  "extraFiles":"./dataFiles/*",
-  "win": {
-      "icon":"./build/icon.ico"
+    },
+    "extraFiles": "./dataFiles/*",
+    "win": {
+      "icon": "./build/icon.ico"
     }
   },
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "alertifyjs": "^1.10.0",
@@ -66,8 +65,10 @@
     "style-loader": "^0.13.2",
     "styled-components": "^2.1.1",
     "url-loader": "^0.5.9",
-    "webpack": "^2.7.0"},
+    "webpack": "^2.7.0"
+  },
   "dependencies": {
+    "electron-build": "^0.0.3",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "uuid": "^3.1.0"
