@@ -59680,10 +59680,31 @@ var _lodash2 = _interopRequireDefault(_lodash);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AppSidebar = function AppSidebar(props) {
+	var sortedKeys = function sortedKeys(obj, func) {
+		var arrayOfKeys = Object.keys(obj);
+		arrayOfKeys.sort(function (a, b) {
+			var aUp = a.toUpperCase(); // ignore upper and lowercase
+			var bUp = b.toUpperCase(); // ignore upper and lowercase
+			if (aUp < bUp) {
+				return -1;
+			}
+			if (aUp > bUp) {
+				return 1;
+			}
+			// names must be equal
+			return 0;
+		});
+
+		var returnArr = [];
+		arrayOfKeys.forEach(function (key) {
+			returnArr.push(func(obj[key], key));
+		});
+		return returnArr;
+	};
 	return _react2.default.createElement(
 		'ul',
 		{ className: 'content-nav-menu' },
-		_lodash2.default.map(props.wordListIndex, function (data, key) {
+		sortedKeys(props.wordListIndex, function (data, key) {
 			return _react2.default.createElement(
 				'li',
 				{ key: key },
@@ -61248,7 +61269,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var wordListIndexReducer = exports.wordListIndexReducer = function wordListIndexReducer() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	var action = arguments[1];
 
 	switch (action.type) {

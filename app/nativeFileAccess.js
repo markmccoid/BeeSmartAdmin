@@ -31,6 +31,9 @@ const getLocalFile = (dataFile) => {
 const WORD_LIST_INDEX = 'wordListIndex.json';
 const SETTINGS = 'settings.json';
 
+//=====================================================
+//--settings.json
+//=====================================================
 //--------------------
 //-Returns the settings object
 const getSettings = () => {
@@ -40,6 +43,7 @@ const getSettings = () => {
     });
 };
 
+//--Saves the wordsPerPage settings option
 const saveWordsPerPage = wordsPerPage => {
   return readFilePromise(getLocalFile(SETTINGS))
     .then(data => {
@@ -54,14 +58,10 @@ const saveWordsPerPage = wordsPerPage => {
       });
     });
 }
-//--------------------
-//-Returns the wordListIndex array of objects found in wordListIndex.json
-const getWordListIndex = () => {
-  return readFilePromise(getLocalFile(WORD_LIST_INDEX))
-    .then(data => {
-      return JSON.parse(data);
-    });
-};
+
+//=====================================================
+//--Word List File access
+//=====================================================
 //--------------------
 //-Returns the list of words (array of objects) from the passed
 //-wordListName parameter.
@@ -95,6 +95,17 @@ const deleteWordsFromList = (wordListName, idsToDelete) => {
   });
 };
 
+//=====================================================
+//--wordListIndex.json
+//=====================================================
+//-Returns the wordListIndex array of objects found in wordListIndex.json
+const getWordListIndex = () => {
+  return readFilePromise(getLocalFile(WORD_LIST_INDEX))
+    .then(data => {
+      return JSON.parse(data);
+    });
+};
+//--Updates the word count in the wordListIndex.json
 const updateWordListIndex = (wordListName, newCount) => {
   wliFileName = getLocalFile(WORD_LIST_INDEX);
   return readFilePromise(wliFileName)
