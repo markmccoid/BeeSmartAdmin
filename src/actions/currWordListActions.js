@@ -40,21 +40,26 @@ export const startLoadWordList = wordListName => {
 //===============================
 //-DELETE_WORDS
 //===============================
-export const deleteWords = (wordListName) => {
+export const deleteWords = (idsToDelete) => {
 	//Once words have been deleted from server file we could
 	//remove them from the list already in redux store OR
 	//Just tell it to reload the word list.
+	// return {
+	// 	type: LOAD_WORD_LIST,
+	// 	wordListName
+	// }
 	return {
-		type: LOAD_WORD_LIST,
-		wordListName
+		type: DELETE_WORDS,
+		idsToDelete
 	}
 };
 export const startDeleteWords = (wordListName, idsToDelete) => {
 	return dispatch => {
 		api.deleteWordsFromList(wordListName, idsToDelete)
 			.then(data => {
-				dispatch(startLoadWordList(wordListName));
-				console.log('delete words thunk', data);
+				dispatch(deleteWords(idsToDelete));
+				//dispatch(startLoadWordList(wordListName));
+				//console.log('delete words thunk', data);
 			});
 	};
 };

@@ -1,5 +1,6 @@
 //-----App State Action Types -----------------------------------------//
 export const LOAD_WORD_LIST_INDEX = 'LOAD_WORD_LIST_INDEX';
+export const UPDATE_WORD_LIST_INDEX = 'UPDATE_WORD_LIST_INDEX';
 export const SET_SELECTED_WORD_LIST = 'SET_SELECTED_WORD_LIST';
 
 //----Word list Action Types ==------------------/

@@ -27516,6 +27516,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 //-----App State Action Types -----------------------------------------//
 var LOAD_WORD_LIST_INDEX = exports.LOAD_WORD_LIST_INDEX = 'LOAD_WORD_LIST_INDEX';
+var UPDATE_WORD_LIST_INDEX = exports.UPDATE_WORD_LIST_INDEX = 'UPDATE_WORD_LIST_INDEX';
 var SET_SELECTED_WORD_LIST = exports.SET_SELECTED_WORD_LIST = 'SET_SELECTED_WORD_LIST';
 
 //----Word list Action Types ==------------------/
@@ -28069,7 +28070,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.deleteWordsFromList = exports.getWordList = exports.getWordListIndex = exports.saveWordsPerPage = exports.getSettings = undefined;
+exports.updateWordListIndex = exports.deleteWordsFromList = exports.getWordList = exports.getWordListIndex = exports.saveWordsPerPage = exports.getSettings = undefined;
 
 var _axios = __webpack_require__(370);
 
@@ -28117,6 +28118,13 @@ var deleteWordsFromList = exports.deleteWordsFromList = function deleteWordsFrom
 	//Using a post for a delete action against the words, cause I don't know no better
 	return nfa.deleteWordsFromList(wordListName, idsToDelete).then(function (response) {
 		//should return the word list with the idsToDelete deleted.
+		return response;
+	});
+};
+
+//Update the count in wordListIndex.json
+var updateWordListIndex = exports.updateWordListIndex = function updateWordListIndex(wordListName, newCount) {
+	return nfa.updateWordListIndex(wordListName, newCount).then(function (response) {
 		return response;
 	});
 };
@@ -36453,9 +36461,13 @@ var PageContainer = function (_React$Component) {
           }),
           _react2.default.createElement(
             'button',
-            { className: this.state.idsToDelete.length > 0 ? "button primary" : "button primary disabled", onClick: function onClick() {
-                return _this2.props.onDeleteWords(_this2.props.wordListName, _this2.state.idsToDelete);
-              } },
+            {
+              className: this.state.idsToDelete.length > 0 ? "button primary" : "button primary disabled",
+              onClick: function onClick() {
+                _this2.props.onDeleteWords(_this2.props.wordListName, _this2.state.idsToDelete);
+                _this2.props.onUpdateWordListIndex(_this2.props.wordListName, _this2.props.wordCount - _this2.state.idsToDelete.length);
+              }
+            },
             'Delete Selected'
           )
         ),
@@ -36493,12 +36505,15 @@ PageContainer.propTypes = {
   onFilterWords: _propTypes2.default.func,
   /** Parms: wordList (string), idsToDelete (array) */
   onDeleteWords: _propTypes2.default.func,
+  /** Parms: wordListName(string), newCount(int) */
+  onUpdateWordListIndex: _propTypes2.default.func,
   pageNumber: _propTypes2.default.number,
   numberOfPages: _propTypes2.default.number,
   pageInfo: _propTypes2.default.object,
   wordListName: _propTypes2.default.string,
   searchText: _propTypes2.default.string,
-  showNewWordsOnly: _propTypes2.default.bool
+  showNewWordsOnly: _propTypes2.default.bool,
+  wordCount: _propTypes2.default.number
 };
 exports.default = PageContainer;
 
@@ -59449,20 +59464,25 @@ var startLoadWordList = exports.startLoadWordList = function startLoadWordList(w
 //===============================
 //-DELETE_WORDS
 //===============================
-var deleteWords = exports.deleteWords = function deleteWords(wordListName) {
+var deleteWords = exports.deleteWords = function deleteWords(idsToDelete) {
 	//Once words have been deleted from server file we could
 	//remove them from the list already in redux store OR
 	//Just tell it to reload the word list.
+	// return {
+	// 	type: LOAD_WORD_LIST,
+	// 	wordListName
+	// }
 	return {
-		type: _actionTypes.LOAD_WORD_LIST,
-		wordListName: wordListName
+		type: _actionTypes.DELETE_WORDS,
+		idsToDelete: idsToDelete
 	};
 };
 var startDeleteWords = exports.startDeleteWords = function startDeleteWords(wordListName, idsToDelete) {
 	return function (dispatch) {
 		api.deleteWordsFromList(wordListName, idsToDelete).then(function (data) {
-			dispatch(startLoadWordList(wordListName));
-			console.log('delete words thunk', data);
+			dispatch(deleteWords(idsToDelete));
+			//dispatch(startLoadWordList(wordListName));
+			//console.log('delete words thunk', data);
 		});
 	};
 };
@@ -59521,7 +59541,7 @@ var startSetWordsPerPage = exports.startSetWordsPerPage = function startSetWords
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.startLoadWordListIndex = exports.loadWordListIndex = undefined;
+exports.startUpdateWordListIndex = exports.updateWordListIndex = exports.startLoadWordListIndex = exports.loadWordListIndex = undefined;
 
 var _api = __webpack_require__(55);
 
@@ -59546,6 +59566,25 @@ var startLoadWordListIndex = exports.startLoadWordListIndex = function startLoad
 		var request = api.getWordListIndex();
 		request.then(function (data) {
 			dispatch(loadWordListIndex(data));
+		});
+	};
+};
+//------------------------------------------------
+//-----------------------------------------------
+//Updates the word list count information in store and writes the wordListIndex.json file
+var updateWordListIndex = exports.updateWordListIndex = function updateWordListIndex(wordListName, newCount) {
+	return {
+		type: _actionTypes.UPDATE_WORD_LIST_INDEX,
+		payload: { wordListName: wordListName, newCount: newCount }
+	};
+};
+
+var startUpdateWordListIndex = exports.startUpdateWordListIndex = function startUpdateWordListIndex(wordListName, newCount) {
+	return function (dispatch) {
+		//Get list of Applications in the QVVariables.json file on server
+		var request = api.updateWordListIndex(wordListName, newCount);
+		request.then(function (data) {
+			dispatch(updateWordListIndex(wordListName, newCount));
 		});
 	};
 };
@@ -60642,8 +60681,10 @@ var WordListContainer = function (_React$Component) {
           onSetPageNumber: this.props.setPageNumber,
           onFilterWords: this.handleFilterWords,
           onDeleteWords: this.props.deleteWords,
+          onUpdateWordListIndex: this.props.updateWordListIndex,
           searchText: this.state.searchText,
-          showNewWordsOnly: this.state.showNewWordsOnly
+          showNewWordsOnly: this.state.showNewWordsOnly,
+          wordCount: this.props.currWordList.length
         });
       }
       return _react2.default.createElement(
@@ -60670,7 +60711,8 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps, {
   loadWordList: _actions.startLoadWordList,
   deleteWords: _actions.startDeleteWords,
   setPageNumber: _actions.setPageNumber,
-  savePageData: _actions.savePageData
+  savePageData: _actions.savePageData,
+  updateWordListIndex: _actions.startUpdateWordListIndex
 })(WordListContainer);
 
 /***/ }),
@@ -61064,7 +61106,15 @@ var currWordListReducer = exports.currWordListReducer = function currWordListRed
 	switch (action.type) {
 		case _actions.LOAD_WORD_LIST:
 			return action.wordList;
-
+		case _actions.DELETE_WORDS:
+			console.log('State before', state[1], action.idsToDelete);
+			var newWordList = _lodash2.default.filter(state, function (obj) {
+				//want to remove any words with ids that are in the array "idsToDelete"
+				//thus if indexOf returns -1, it means the id we are checking is NOT in the delete list
+				return _lodash2.default.indexOf(action.idsToDelete, obj.id) === -1;
+			});
+			console.log('New State', newWordList.length);
+			return newWordList;
 		default:
 			return state;
 	}
@@ -61195,6 +61245,8 @@ var _actions = __webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var wordListIndexReducer = exports.wordListIndexReducer = function wordListIndexReducer() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	var action = arguments[1];
@@ -61202,6 +61254,16 @@ var wordListIndexReducer = exports.wordListIndexReducer = function wordListIndex
 	switch (action.type) {
 		case _actions.LOAD_WORD_LIST_INDEX:
 			return action.wordListIndex;
+		case _actions.UPDATE_WORD_LIST_INDEX:
+			var _action$payload = action.payload,
+			    wordListName = _action$payload.wordListName,
+			    newCount = _action$payload.newCount;
+			//create new object for the wordList we are updating
+
+			var newWordListObj = Object.assign({}, state[wordListName], { numberOfWords: newCount });
+			//reconstruct state replacing the wordListName entry with the updated one.
+			var newState = Object.assign({}, state, _defineProperty({}, wordListName, newWordListObj));
+			return newState;
 		default:
 			return state;
 	}

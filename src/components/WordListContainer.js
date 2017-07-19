@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 
-import { startLoadWordList, startDeleteWords, setPageNumber, savePageData } from '../actions';
+import { startLoadWordList, startDeleteWords, setPageNumber, savePageData, startUpdateWordListIndex } from '../actions';
 import { filterWords } from '../helpers';
 
 import PageContainer from './PageContainer';
@@ -65,8 +65,10 @@ class WordListContainer extends React.Component {
           onSetPageNumber={this.props.setPageNumber}
           onFilterWords={this.handleFilterWords}
 					onDeleteWords={this.props.deleteWords}
+          onUpdateWordListIndex={this.props.updateWordListIndex}
           searchText={this.state.searchText}
           showNewWordsOnly={this.state.showNewWordsOnly}
+          wordCount={this.props.currWordList.length}
         />
     );
     }
@@ -91,5 +93,6 @@ export default connect(mapStateToProps, {
   loadWordList: startLoadWordList,
 	deleteWords: startDeleteWords,
 	setPageNumber: setPageNumber,
-  savePageData: savePageData
+  savePageData: savePageData,
+  updateWordListIndex: startUpdateWordListIndex
 })(WordListContainer);

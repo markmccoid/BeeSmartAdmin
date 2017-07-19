@@ -41,7 +41,6 @@ const getSettings = () => {
 };
 
 const saveWordsPerPage = wordsPerPage => {
-  console.log('in Savewpp')
   return readFilePromise(getLocalFile(SETTINGS))
     .then(data => {
       let settings = JSON.parse(data);
@@ -79,28 +78,47 @@ const deleteWordsFromList = (wordListName, idsToDelete) => {
   wordListName = getLocalFile(wordListName);
   return readFilePromise(`${wordListName}.json`)
     .then(data => {
-    let wordList = _.sortBy(JSON.parse(data), 'word');
-    let newWordList = _.filter(wordList, obj => {
-      console.log(obj.ids);
-      //want to remove any words with ids that are in the array "idsToDelete"
-      //thus if indexOf returns -1, it means the id we are checking is NOT in the delete list
-      return (_.indexOf(idsToDelete, obj.id) === -1);
-    });
-    fs.writeFile(`${wordListName}.json`, JSON.stringify(newWordList), (err) => {
-      if (err) {
-        console.log(`Error writing ${wordListName}.json!`, err);
-      }
-      console.log(`${wordListName}.json written successfully!`);
-    });
-    return newWordList;
+      let wordList = _.sortBy(JSON.parse(data), 'word');
+      let newWordList = _.filter(wordList, obj => {
+        console.log(obj.ids);
+        //want to remove any words with ids that are in the array "idsToDelete"
+        //thus if indexOf returns -1, it means the id we are checking is NOT in the delete list
+        return (_.indexOf(idsToDelete, obj.id) === -1);
+      });
+      fs.writeFile(`${wordListName}.json`, JSON.stringify(newWordList), (err) => {
+        if (err) {
+          console.log(`Error writing ${wordListName}.json!`, err);
+        }
+        console.log(`${wordListName}.json written successfully!`);
+      });
+      return newWordList;
   });
 };
 
+const updateWordListIndex = (wordListName, newCount) => {
+  wliFileName = getLocalFile(WORD_LIST_INDEX);
+  return readFilePromise(wliFileName)
+    .then(data => {
+      data = JSON.parse(data);
+      let newWordListObj = Object.assign({}, data[wordListName], {numberOfWords: newCount});
+			//reconstruct state replacing the wordListName entry with the updated one.
+			let newWordListIndex = Object.assign({}, data, {[wordListName]: newWordListObj});
+
+      fs.writeFile(`${wliFileName}`, JSON.stringify(newWordListIndex), (err) => {
+        if (err) {
+          console.log(`Error writing ${wliFileName}!`, err);
+        }
+        console.log(`${wliFileName} written successfully!`);
+      });
+      return {status: 200};
+  });
+};
 //--Exports the functions to be used in the application
 module.exports = {
 	getWordListIndex,
   getWordList,
   deleteWordsFromList,
   getSettings,
-  saveWordsPerPage
+  saveWordsPerPage,
+  updateWordListIndex
 }

@@ -39,3 +39,11 @@ export const deleteWordsFromList = (wordListName, idsToDelete) => {
 				return response;
 			});
 };
+
+//Update the count in wordListIndex.json
+export const updateWordListIndex = (wordListName, newCount) => {
+	return nfa.updateWordListIndex(wordListName, newCount)
+		.then(response => {
+			return response;
+		});
+};

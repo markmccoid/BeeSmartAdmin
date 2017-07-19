@@ -70,7 +70,16 @@ class PageContainer extends React.Component {
             searchText={this.props.searchText}
             showNewWordsOnly={this.props.showNewWordsOnly}
           />
-				<button className={this.state.idsToDelete.length > 0 ? "button primary" : "button primary disabled"} onClick={() => this.props.onDeleteWords(this.props.wordListName, this.state.idsToDelete)}>Delete Selected</button>
+				<button
+          className={this.state.idsToDelete.length > 0 ? "button primary" : "button primary disabled"}
+          onClick={() => {
+                this.props.onDeleteWords(this.props.wordListName, this.state.idsToDelete);
+                this.props.onUpdateWordListIndex(this.props.wordListName, this.props.wordCount - this.state.idsToDelete.length);
+              }
+            }
+        >
+          Delete Selected
+        </button>
 
         </PageControlSearchContainer>
         {this.state.viewType === 'table' ?
@@ -106,12 +115,15 @@ PageContainer.propTypes = {
   onFilterWords: PropTypes.func,
 	/** Parms: wordList (string), idsToDelete (array) */
 	onDeleteWords: PropTypes.func,
+  /** Parms: wordListName(string), newCount(int) */
+  onUpdateWordListIndex: PropTypes.func,
   pageNumber: PropTypes.number,
   numberOfPages: PropTypes.number,
   pageInfo: PropTypes.object,
   wordListName: PropTypes.string,
   searchText: PropTypes.string,
-  showNewWordsOnly: PropTypes.bool
+  showNewWordsOnly: PropTypes.bool,
+  wordCount: PropTypes.number
 }
 export default PageContainer;
 
