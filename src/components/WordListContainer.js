@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 
-import { startLoadWordList, startDeleteWords, setPageNumber, savePageData, startUpdateWordListIndex } from '../actions';
+import { startLoadWordList, startDeleteWords, setPageNumber,
+         savePageData, startUpdateWordListIndex, startUpdateFavorite } from '../actions';
 import { filterWords } from '../helpers';
 
 import PageContainer from './PageContainer';
@@ -12,7 +13,8 @@ import PageContainer from './PageContainer';
 class WordListContainer extends React.Component {
   state = {
     searchText: '',
-    showNewWordsOnly: false
+    showNewWordsOnly: false,
+    showFavorites: false
   };
 
   componentDidMount() {
@@ -29,7 +31,7 @@ class WordListContainer extends React.Component {
   /** Returns an object with the pageData object and the number of pages*/
   getPageData = (currWordList, pageNumber, wordsPerPage) => {
     //Filter words if needed
-    let filteredWordList = filterWords(currWordList, this.state.searchText, this.state.showNewWordsOnly);
+    let filteredWordList = filterWords(currWordList, this.state.searchText, this.state.showNewWordsOnly, this.state.showFavorites);
     //calculate how many pages
     let numberOfPages = Math.ceil((filteredWordList.length)/wordsPerPage);
 
@@ -41,10 +43,11 @@ class WordListContainer extends React.Component {
     return {pageData, numberOfPages};
   }
 
-  handleFilterWords = (searchText, showNewWordsOnly) => {
+  handleFilterWords = (searchText, showNewWordsOnly, showFavorites) => {
     this.setState({
       searchText,
-      showNewWordsOnly
+      showNewWordsOnly,
+      showFavorites
     });
   }
   render() {
@@ -65,9 +68,11 @@ class WordListContainer extends React.Component {
           onSetPageNumber={this.props.setPageNumber}
           onFilterWords={this.handleFilterWords}
 					onDeleteWords={this.props.deleteWords}
+          onUpdateFavorite={this.props.updateFavorite}
           onUpdateWordListIndex={this.props.updateWordListIndex}
           searchText={this.state.searchText}
           showNewWordsOnly={this.state.showNewWordsOnly}
+          showFavorites={this.state.showFavorites}
           wordCount={this.props.currWordList.length}
         />
     );
@@ -94,5 +99,6 @@ export default connect(mapStateToProps, {
 	deleteWords: startDeleteWords,
 	setPageNumber: setPageNumber,
   savePageData: savePageData,
-  updateWordListIndex: startUpdateWordListIndex
+  updateWordListIndex: startUpdateWordListIndex,
+  updateFavorite: startUpdateFavorite
 })(WordListContainer);

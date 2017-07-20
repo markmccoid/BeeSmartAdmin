@@ -19,11 +19,12 @@ const formatDataForTable = data => {
     partOfSpeech: wordObj.partOfSpeech,
     diacritic: wordObj.diacritic,
     origin: wordObj.origin,
-    isNewWord: wordObj.isNewWord
+    isNewWord: wordObj.isNewWord,
+    isFavorite: wordObj.isFavorite
   }));
   return dataSource;
 };
-const setupTableColumns = () => {
+const setupTableColumns = (onUpdateFavorite, wordListName) => {
   let newWordClass = ''
   const columns = [{
     title: 'Syllables',
@@ -45,6 +46,21 @@ const setupTableColumns = () => {
     dataIndex: 'origin',
     key: 'origin',
     width: 400
+  },{
+    title: 'Favorite?',
+    dataIndex: 'isFavorite',
+    key: 'isFavorite',
+    width: 100,
+    render: (text, record, index) => {
+      // console.log(`cell (data content for this cell)${text}
+      // row data ${record}
+      // index of row ${index}`);
+      let wordId = record.key;
+      return (text ?
+        <button onClick={() => onUpdateFavorite(wordListName, wordId, false)}><Icon type="heart" /></button>
+        :
+        <button onClick={() => onUpdateFavorite(wordListName, wordId, true)}><Icon type="heart-o" /></button>);
+    }
   },{
     title: 'New Word?',
     dataIndex: 'isNewWord',
@@ -80,7 +96,7 @@ const Table2 = (props) => {
   let rowClassName = [];
   //--create antd needed props
   const tableData = formatDataForTable(props.pageData);
-  const tableColumns = setupTableColumns();
+  const tableColumns = setupTableColumns(props.onUpdateFavorite, props.wordListName);
   const rowSelectionConfig = getRowConfig(props.onDeleteToggle, props.idsToDelete);
   const getRowClassName = (record, index) => {
     //console.log('rowclassName', record);
@@ -111,7 +127,9 @@ Table2.propTypes = {
   pageData: PropTypes.array,
 	/** params: id (string), checked (bool)*/
 	onDeleteToggle: PropTypes.func,
-  idsToDelete: PropTypes.array
+  onUpdateFavorite: PropTypes.func,
+  idsToDelete: PropTypes.array,
+  wordListName: PropTypes.string
 };
 
 export default Table2;

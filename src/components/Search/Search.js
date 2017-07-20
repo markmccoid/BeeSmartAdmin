@@ -18,8 +18,8 @@ const CheckStyled = styled(Checkbox)`
 `;
 const Search = (props) => {
 
-	const handleSearch = (searchText, showNewWordsOnly) => {
-		props.onFilterWords(searchText, showNewWordsOnly);
+	const handleSearch = (searchText, showNewWordsOnly, showFavorites) => {
+		props.onFilterWords(searchText, showNewWordsOnly, showFavorites);
 	};
 
 		return (
@@ -31,10 +31,16 @@ const Search = (props) => {
 					onChange={e => handleSearch(e.target.value, props.showNewWordsOnly)}
 				/>
 				<CheckStyled
-					onChange={e => handleSearch(props.searchText, e.target.checked)}
+					onChange={e => handleSearch(props.searchText, e.target.checked, props.showFavorites)}
 					checked={props.showNewWordsOnly}
 				>
-					Only New Words
+					New Words
+				</CheckStyled>
+				<CheckStyled
+					onChange={e => handleSearch(props.searchText, props.showNewWordsOnly, e.target.checked)}
+					checked={props.showFavorites}
+				>
+					Favorites
 				</CheckStyled>
 			</SearchContainer>
 		);
@@ -44,7 +50,8 @@ const Search = (props) => {
 Search.propTypes = {
   onFilterWords: PropTypes.func,
 	searchText: PropTypes.string,
-	showNewWordsOnly: PropTypes.bool
+	showNewWordsOnly: PropTypes.bool,
+	showFavorites: PropTypes.bool
 }
 
 export default Search;

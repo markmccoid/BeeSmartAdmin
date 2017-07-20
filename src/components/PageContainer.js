@@ -69,6 +69,7 @@ class PageContainer extends React.Component {
             onFilterWords={this.props.onFilterWords}
             searchText={this.props.searchText}
             showNewWordsOnly={this.props.showNewWordsOnly}
+            showFavorites={this.props.showFavorites}
           />
 				<button
           className={this.state.idsToDelete.length > 0 ? "button primary" : "button primary disabled"}
@@ -87,6 +88,8 @@ class PageContainer extends React.Component {
             pageData={pageData}
             onDeleteToggle={this.handleTableDeleteSelect}
             idsToDelete={this.state.idsToDelete}
+            onUpdateFavorite={this.props.onUpdateFavorite}
+            wordListName={this.props.wordListName}
           /> :
           <WordCardDiv>
             {pageData.map(wordObj => {
@@ -117,6 +120,8 @@ PageContainer.propTypes = {
 	onDeleteWords: PropTypes.func,
   /** Parms: wordListName(string), newCount(int) */
   onUpdateWordListIndex: PropTypes.func,
+  /** Parms: wordListName(string), wordId(string), isFavorite(bool) */
+  onUpdateFavorite: PropTypes.func,
   pageNumber: PropTypes.number,
   numberOfPages: PropTypes.number,
   pageInfo: PropTypes.object,

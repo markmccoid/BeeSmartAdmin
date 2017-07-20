@@ -27526,6 +27526,8 @@ var WORD_LIST_LOAD_SUCCESS = exports.WORD_LIST_LOAD_SUCCESS = 'WORD_LIST_LOAD_SU
 var WORD_LIST_LOAD_ERROR = exports.WORD_LIST_LOAD_ERROR = 'WORD_LIST_LOAD_ERROR';
 
 var DELETE_WORDS = exports.DELETE_WORDS = 'DELETE_WORDS';
+//Set word as favorite or unsets word as favorite
+var UPDATE_FAVORITE = exports.UPDATE_FAVORITE = 'UPDATE_FAVORITE';
 
 //----Page Data ----//
 var SAVE_PAGE_DATA = exports.SAVE_PAGE_DATA = 'SAVE_PAGE_DATA';
@@ -28070,7 +28072,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.updateWordListIndex = exports.deleteWordsFromList = exports.getWordList = exports.getWordListIndex = exports.saveWordsPerPage = exports.getSettings = undefined;
+exports.updateIsFavorite = exports.deleteWordsFromList = exports.updateWordListIndex = exports.getWordList = exports.getWordListIndex = exports.saveWordsPerPage = exports.getSettings = undefined;
 
 var _axios = __webpack_require__(370);
 
@@ -28089,31 +28091,54 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var nfa = window.require('../app/nativeFileAccess');
 var API_URL = 'http://localhost:3001';
 
+//--------------------------------------------------------
+//--Get the settings
 var getSettings = exports.getSettings = function getSettings() {
 	return nfa.getSettings().then(function (response) {
 		return response;
 	});
 };
+//--------------------------------------------------------
+//--Save the wordPerPage setting
 var saveWordsPerPage = exports.saveWordsPerPage = function saveWordsPerPage(wordsPerPage) {
 	return nfa.saveWordsPerPage(wordsPerPage).then(function (response) {
 		return response;
 	});
 };
 
+//--------------------------------------------------------
+//--Get the wordListIndex.json in javascript object
 var getWordListIndex = exports.getWordListIndex = function getWordListIndex() {
 	return nfa.getWordListIndex().then(function (response) {
 		return response;
 	});
 };
 
+//--------------------------------------------------------
 //Get a single word list's data
 var getWordList = exports.getWordList = function getWordList(wordListName) {
 	return nfa.getWordList(wordListName).then(function (response) {
+		//check to see if isFavorite property exists, if not add it as false
+		Object.keys(response).forEach(function (obj) {
+			if (!response[obj].hasOwnProperty('isFavorite')) {
+				response[obj].isFavorite = false;
+			}
+		});
 		//need to deal with error responses i.e. wordList that doesn't exist.
 		return response;
 	});
 };
 
+//--------------------------------------------------------
+//--Update the count in wordListIndex.json
+var updateWordListIndex = exports.updateWordListIndex = function updateWordListIndex(wordListName, newCount) {
+	return nfa.updateWordListIndex(wordListName, newCount).then(function (response) {
+		return response;
+	});
+};
+
+//--------------------------------------------------------
+//--Delete an array of words from the passed wordListName
 var deleteWordsFromList = exports.deleteWordsFromList = function deleteWordsFromList(wordListName, idsToDelete) {
 	//Using a post for a delete action against the words, cause I don't know no better
 	return nfa.deleteWordsFromList(wordListName, idsToDelete).then(function (response) {
@@ -28122,9 +28147,10 @@ var deleteWordsFromList = exports.deleteWordsFromList = function deleteWordsFrom
 	});
 };
 
-//Update the count in wordListIndex.json
-var updateWordListIndex = exports.updateWordListIndex = function updateWordListIndex(wordListName, newCount) {
-	return nfa.updateWordListIndex(wordListName, newCount).then(function (response) {
+//--------------------------------------------------------
+//--Update the passed wordListName's isFavorite property
+var updateIsFavorite = exports.updateIsFavorite = function updateIsFavorite(wordListName, wordId, isFavorite) {
+	return nfa.updateIsFavorite(wordListName, wordId, isFavorite).then(function (response) {
 		return response;
 	});
 };
@@ -36457,7 +36483,8 @@ var PageContainer = function (_React$Component) {
           _react2.default.createElement(_Search2.default, {
             onFilterWords: this.props.onFilterWords,
             searchText: this.props.searchText,
-            showNewWordsOnly: this.props.showNewWordsOnly
+            showNewWordsOnly: this.props.showNewWordsOnly,
+            showFavorites: this.props.showFavorites
           }),
           _react2.default.createElement(
             'button',
@@ -36474,7 +36501,9 @@ var PageContainer = function (_React$Component) {
         this.state.viewType === 'table' ? _react2.default.createElement(_Table2.default, {
           pageData: pageData,
           onDeleteToggle: this.handleTableDeleteSelect,
-          idsToDelete: this.state.idsToDelete
+          idsToDelete: this.state.idsToDelete,
+          onUpdateFavorite: this.props.onUpdateFavorite,
+          wordListName: this.props.wordListName
         }) : _react2.default.createElement(
           WordCardDiv,
           null,
@@ -36507,6 +36536,8 @@ PageContainer.propTypes = {
   onDeleteWords: _propTypes2.default.func,
   /** Parms: wordListName(string), newCount(int) */
   onUpdateWordListIndex: _propTypes2.default.func,
+  /** Parms: wordListName(string), wordId(string), isFavorite(bool) */
+  onUpdateFavorite: _propTypes2.default.func,
   pageNumber: _propTypes2.default.number,
   numberOfPages: _propTypes2.default.number,
   pageInfo: _propTypes2.default.object,
@@ -59421,7 +59452,7 @@ var setPageNumber = exports.setPageNumber = function setPageNumber(pageNumber) {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.startDeleteWords = exports.deleteWords = exports.startLoadWordList = exports.loadWordList = undefined;
+exports.startUpdateFavorite = exports.updateFavorite = exports.startDeleteWords = exports.deleteWords = exports.startLoadWordList = exports.loadWordList = undefined;
 
 var _api = __webpack_require__(55);
 
@@ -59483,6 +59514,24 @@ var startDeleteWords = exports.startDeleteWords = function startDeleteWords(word
 			dispatch(deleteWords(idsToDelete));
 			//dispatch(startLoadWordList(wordListName));
 			//console.log('delete words thunk', data);
+		});
+	};
+};
+
+//===============================
+//-UPDATE_FAVORITE
+//===============================
+var updateFavorite = exports.updateFavorite = function updateFavorite(wordListName, wordId, isFavorite) {
+	return {
+		type: _actionTypes.UPDATE_FAVORITE,
+		payload: { wordListName: wordListName, wordId: wordId, isFavorite: isFavorite }
+	};
+};
+
+var startUpdateFavorite = exports.startUpdateFavorite = function startUpdateFavorite(wordListName, wordId, isFavorite) {
+	return function (dispatch) {
+		api.updateIsFavorite(wordListName, wordId, isFavorite).then(function (data) {
+			dispatch(updateFavorite(wordListName, wordId, isFavorite));
 		});
 	};
 };
@@ -60047,8 +60096,8 @@ var Input = _styledComponents2.default.input(_templateObject2);
 var CheckStyled = (0, _styledComponents2.default)(_checkbox2.default)(_templateObject3);
 var Search = function Search(props) {
 
-	var handleSearch = function handleSearch(searchText, showNewWordsOnly) {
-		props.onFilterWords(searchText, showNewWordsOnly);
+	var handleSearch = function handleSearch(searchText, showNewWordsOnly, showFavorites) {
+		props.onFilterWords(searchText, showNewWordsOnly, showFavorites);
 	};
 
 	return _react2.default.createElement(
@@ -60070,11 +60119,21 @@ var Search = function Search(props) {
 			CheckStyled,
 			{
 				onChange: function onChange(e) {
-					return handleSearch(props.searchText, e.target.checked);
+					return handleSearch(props.searchText, e.target.checked, props.showFavorites);
 				},
 				checked: props.showNewWordsOnly
 			},
-			'Only New Words'
+			'New Words'
+		),
+		_react2.default.createElement(
+			CheckStyled,
+			{
+				onChange: function onChange(e) {
+					return handleSearch(props.searchText, props.showNewWordsOnly, e.target.checked);
+				},
+				checked: props.showFavorites
+			},
+			'Favorites'
 		)
 	);
 };
@@ -60082,7 +60141,8 @@ var Search = function Search(props) {
 Search.propTypes = {
 	onFilterWords: _propTypes2.default.func,
 	searchText: _propTypes2.default.string,
-	showNewWordsOnly: _propTypes2.default.bool
+	showNewWordsOnly: _propTypes2.default.bool,
+	showFavorites: _propTypes2.default.bool
 };
 
 exports.default = Search;
@@ -60327,12 +60387,13 @@ var formatDataForTable = function formatDataForTable(data) {
       partOfSpeech: wordObj.partOfSpeech,
       diacritic: wordObj.diacritic,
       origin: wordObj.origin,
-      isNewWord: wordObj.isNewWord
+      isNewWord: wordObj.isNewWord,
+      isFavorite: wordObj.isFavorite
     };
   });
   return dataSource;
 };
-var setupTableColumns = function setupTableColumns() {
+var setupTableColumns = function setupTableColumns(onUpdateFavorite, wordListName) {
   var newWordClass = '';
   var columns = [{
     title: 'Syllables',
@@ -60354,6 +60415,30 @@ var setupTableColumns = function setupTableColumns() {
     dataIndex: 'origin',
     key: 'origin',
     width: 400
+  }, {
+    title: 'Favorite?',
+    dataIndex: 'isFavorite',
+    key: 'isFavorite',
+    width: 100,
+    render: function render(text, record, index) {
+      // console.log(`cell (data content for this cell)${text}
+      // row data ${record}
+      // index of row ${index}`);
+      var wordId = record.key;
+      return text ? _react2.default.createElement(
+        'button',
+        { onClick: function onClick() {
+            return onUpdateFavorite(wordListName, wordId, false);
+          } },
+        _react2.default.createElement(_icon2.default, { type: 'heart' })
+      ) : _react2.default.createElement(
+        'button',
+        { onClick: function onClick() {
+            return onUpdateFavorite(wordListName, wordId, true);
+          } },
+        _react2.default.createElement(_icon2.default, { type: 'heart-o' })
+      );
+    }
   }, {
     title: 'New Word?',
     dataIndex: 'isNewWord',
@@ -60393,7 +60478,7 @@ var Table2 = function Table2(props) {
   var rowClassName = [];
   //--create antd needed props
   var tableData = formatDataForTable(props.pageData);
-  var tableColumns = setupTableColumns();
+  var tableColumns = setupTableColumns(props.onUpdateFavorite, props.wordListName);
   var rowSelectionConfig = getRowConfig(props.onDeleteToggle, props.idsToDelete);
   var getRowClassName = function getRowClassName(record, index) {
     //console.log('rowclassName', record);
@@ -60428,7 +60513,9 @@ Table2.propTypes = {
   pageData: _propTypes2.default.array,
   /** params: id (string), checked (bool)*/
   onDeleteToggle: _propTypes2.default.func,
-  idsToDelete: _propTypes2.default.array
+  onUpdateFavorite: _propTypes2.default.func,
+  idsToDelete: _propTypes2.default.array,
+  wordListName: _propTypes2.default.string
 };
 
 exports.default = Table2;
@@ -60636,10 +60723,11 @@ var WordListContainer = function (_React$Component) {
 
     return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = WordListContainer.__proto__ || Object.getPrototypeOf(WordListContainer)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
       searchText: '',
-      showNewWordsOnly: false
+      showNewWordsOnly: false,
+      showFavorites: false
     }, _this.getPageData = function (currWordList, pageNumber, wordsPerPage) {
       //Filter words if needed
-      var filteredWordList = (0, _helpers.filterWords)(currWordList, _this.state.searchText, _this.state.showNewWordsOnly);
+      var filteredWordList = (0, _helpers.filterWords)(currWordList, _this.state.searchText, _this.state.showNewWordsOnly, _this.state.showFavorites);
       //calculate how many pages
       var numberOfPages = Math.ceil(filteredWordList.length / wordsPerPage);
 
@@ -60649,10 +60737,11 @@ var WordListContainer = function (_React$Component) {
       var pageData = filteredWordList.slice(startPagePos, endPagePos);
       //Return an object {pageData, numberOfPages}
       return { pageData: pageData, numberOfPages: numberOfPages };
-    }, _this.handleFilterWords = function (searchText, showNewWordsOnly) {
+    }, _this.handleFilterWords = function (searchText, showNewWordsOnly, showFavorites) {
       _this.setState({
         searchText: searchText,
-        showNewWordsOnly: showNewWordsOnly
+        showNewWordsOnly: showNewWordsOnly,
+        showFavorites: showFavorites
       });
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
@@ -60702,9 +60791,11 @@ var WordListContainer = function (_React$Component) {
           onSetPageNumber: this.props.setPageNumber,
           onFilterWords: this.handleFilterWords,
           onDeleteWords: this.props.deleteWords,
+          onUpdateFavorite: this.props.updateFavorite,
           onUpdateWordListIndex: this.props.updateWordListIndex,
           searchText: this.state.searchText,
           showNewWordsOnly: this.state.showNewWordsOnly,
+          showFavorites: this.state.showFavorites,
           wordCount: this.props.currWordList.length
         });
       }
@@ -60733,7 +60824,8 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps, {
   deleteWords: _actions.startDeleteWords,
   setPageNumber: _actions.setPageNumber,
   savePageData: _actions.savePageData,
-  updateWordListIndex: _actions.startUpdateWordListIndex
+  updateWordListIndex: _actions.startUpdateWordListIndex,
+  updateFavorite: _actions.startUpdateFavorite
 })(WordListContainer);
 
 /***/ }),
@@ -60991,6 +61083,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 var filterWords = exports.filterWords = function filterWords(wordData, searchText) {
 	var showNewWordsOnly = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+	var showFavorites = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
 	//-------------------
 	//- wordData : array of objects for the word list selected
@@ -61003,6 +61096,11 @@ var filterWords = exports.filterWords = function filterWords(wordData, searchTex
 	if (showNewWordsOnly) {
 		filteredwordData = filteredwordData.filter(function (value) {
 			return value.isNewWord;
+		});
+	}
+	if (showFavorites) {
+		filteredwordData = filteredwordData.filter(function (value) {
+			return value.isFavorite;
 		});
 	}
 
@@ -61112,6 +61210,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.currWordListReducer = undefined;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _lodash = __webpack_require__(43);
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -61128,14 +61228,26 @@ var currWordListReducer = exports.currWordListReducer = function currWordListRed
 		case _actions.LOAD_WORD_LIST:
 			return action.wordList;
 		case _actions.DELETE_WORDS:
-			console.log('State before', state[1], action.idsToDelete);
 			var newWordList = _lodash2.default.filter(state, function (obj) {
 				//want to remove any words with ids that are in the array "idsToDelete"
 				//thus if indexOf returns -1, it means the id we are checking is NOT in the delete list
 				return _lodash2.default.indexOf(action.idsToDelete, obj.id) === -1;
 			});
-			console.log('New State', newWordList.length);
 			return newWordList;
+		case _actions.UPDATE_FAVORITE:
+			var _action$payload = action.payload,
+			    wordListName = _action$payload.wordListName,
+			    wordId = _action$payload.wordId,
+			    isFavorite = _action$payload.isFavorite;
+
+			var newUFWordList = state.map(function (wordObj) {
+				if (wordObj.id === wordId) {
+					console.log(_extends({}, wordObj, { isFavorite: isFavorite }));
+					return _extends({}, wordObj, { isFavorite: isFavorite });
+				}
+				return wordObj;
+			});
+			return newUFWordList;
 		default:
 			return state;
 	}

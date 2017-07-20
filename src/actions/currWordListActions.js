@@ -5,7 +5,8 @@ import { LOAD_WORD_LIST,
 				 WORD_LIST_LOAD_SUCCESS,
 				 WORD_LIST_LOAD_ERROR,
 			 	 SET_PAGE_NUMBER,
-			 	 DELETE_WORDS } from './actionTypes';
+			 	 DELETE_WORDS,
+			   UPDATE_FAVORITE } from './actionTypes';
 import { setSelectedWordList } from './appStateActions';
 
 //-----------------------------------------------
@@ -60,6 +61,25 @@ export const startDeleteWords = (wordListName, idsToDelete) => {
 				dispatch(deleteWords(idsToDelete));
 				//dispatch(startLoadWordList(wordListName));
 				//console.log('delete words thunk', data);
+			});
+	};
+};
+
+//===============================
+//-UPDATE_FAVORITE
+//===============================
+export const updateFavorite = (wordListName, wordId, isFavorite) => {
+	return {
+		type: UPDATE_FAVORITE,
+		payload: {wordListName, wordId, isFavorite}
+	}
+};
+
+export const startUpdateFavorite = (wordListName, wordId, isFavorite) => {
+	return dispatch => {
+		api.updateIsFavorite(wordListName, wordId, isFavorite)
+			.then(data => {
+				dispatch(updateFavorite(wordListName, wordId, isFavorite));
 			});
 	};
 };

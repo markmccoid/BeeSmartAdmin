@@ -80,7 +80,6 @@ const deleteWordsFromList = (wordListName, idsToDelete) => {
     .then(data => {
       let wordList = _.sortBy(JSON.parse(data), 'word');
       let newWordList = _.filter(wordList, obj => {
-        console.log(obj.ids);
         //want to remove any words with ids that are in the array "idsToDelete"
         //thus if indexOf returns -1, it means the id we are checking is NOT in the delete list
         return (_.indexOf(idsToDelete, obj.id) === -1);
@@ -93,6 +92,28 @@ const deleteWordsFromList = (wordListName, idsToDelete) => {
       });
       return newWordList;
   });
+};
+
+//---Update isFavorite field
+const updateIsFavorite = (wordListName, wordId, isFavorite) => {
+  wordListName = getLocalFile(wordListName);
+  return readFilePromise(`${wordListName}.json`)
+    .then(data => {
+      let wordData = JSON.parse(data);
+
+      wordData.forEach(wordObj => {
+        if(wordObj.id === wordId) {
+          wordObj.isFavorite = isFavorite;
+        }
+      });
+
+      fs.writeFile(`${wordListName}.json`, JSON.stringify(wordData), (err) => {
+        if (err) {
+          console.log(`updateIsFavorite-Error writing ${wordListName}.json!`, err);
+        }
+        console.log(`updateIsFavorite-${wordListName}.json written successfully!`);
+      });
+    });
 };
 
 //=====================================================
@@ -131,5 +152,6 @@ module.exports = {
   deleteWordsFromList,
   getSettings,
   saveWordsPerPage,
-  updateWordListIndex
+  updateWordListIndex,
+  updateIsFavorite
 }

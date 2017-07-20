@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-export const filterWords = function(wordData, searchText, showNewWordsOnly = false) {
+export const filterWords = function(wordData, searchText, showNewWordsOnly = false, showFavorites = false) {
 	//-------------------
 	//- wordData : array of objects for the word list selected
 	//- searchText : text searching for
@@ -12,6 +12,9 @@ export const filterWords = function(wordData, searchText, showNewWordsOnly = fal
 	//Handle if only showing new words
 	if(showNewWordsOnly) {
 		filteredwordData = filteredwordData.filter((value) => value.isNewWord);
+	}
+	if(showFavorites) {
+		filteredwordData = filteredwordData.filter((value) => value.isFavorite);
 	}
 
 	//Handle search string searching

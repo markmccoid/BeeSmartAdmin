@@ -10,6 +10,8 @@ export const WORD_LIST_LOAD_SUCCESS = 'WORD_LIST_LOAD_SUCCESS';
 export const WORD_LIST_LOAD_ERROR = 'WORD_LIST_LOAD_ERROR';
 
 export const DELETE_WORDS = 'DELETE_WORDS';
+//Set word as favorite or unsets word as favorite
+export const UPDATE_FAVORITE = 'UPDATE_FAVORITE';
 
 //----Page Data ----//
 export const SAVE_PAGE_DATA = 'SAVE_PAGE_DATA';
