@@ -1,6 +1,5 @@
 import * as api from '../api';
-import { SET_SELECTED_WORD_LIST
-} from './actionTypes';
+import { SET_SELECTED_WORD_LIST, SET_SIDEBAR_STATE } from './actionTypes';
 
 export const setSelectedWordList = wordList => {
   return {
@@ -8,3 +7,10 @@ export const setSelectedWordList = wordList => {
     wordList
   }
 };
+
+export const setSideBarState = isSideBarHidden => {
+  return {
+    type: SET_SIDEBAR_STATE,
+    isSideBarHidden
+  }
+}

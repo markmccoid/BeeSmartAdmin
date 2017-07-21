@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 
 import { startLoadWordList, startDeleteWords, setPageNumber,
-         savePageData, startUpdateWordListIndex, startUpdateFavorite } from '../actions';
+         savePageData, startUpdateWordListIndex, startUpdateFavorite,
+         setSideBarState } from '../actions';
 import { filterWords } from '../helpers';
 
 import PageContainer from './PageContainer';
@@ -32,6 +33,9 @@ class WordListContainer extends React.Component {
   getPageData = (currWordList, pageNumber, wordsPerPage) => {
     //Filter words if needed
     let filteredWordList = filterWords(currWordList, this.state.searchText, this.state.showNewWordsOnly, this.state.showFavorites);
+    if (filteredWordList.length === 0) {
+      return {pageData: [{id: '123', word: "NO WORDS FOUND"}], numberOfPages: 1}
+    }
     //calculate how many pages
     let numberOfPages = Math.ceil((filteredWordList.length)/wordsPerPage);
 
@@ -70,6 +74,8 @@ class WordListContainer extends React.Component {
 					onDeleteWords={this.props.deleteWords}
           onUpdateFavorite={this.props.updateFavorite}
           onUpdateWordListIndex={this.props.updateWordListIndex}
+          onSetSideBarState={this.props.setSideBarState}
+          sideBarState={this.props.appState.isSideBarHidden}
           searchText={this.state.searchText}
           showNewWordsOnly={this.state.showNewWordsOnly}
           showFavorites={this.state.showFavorites}
@@ -100,5 +106,6 @@ export default connect(mapStateToProps, {
 	setPageNumber: setPageNumber,
   savePageData: savePageData,
   updateWordListIndex: startUpdateWordListIndex,
-  updateFavorite: startUpdateFavorite
+  updateFavorite: startUpdateFavorite,
+  setSideBarState: setSideBarState
 })(WordListContainer);

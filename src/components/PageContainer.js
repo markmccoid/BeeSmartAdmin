@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Button from 'antd/lib/button';
 import Radio from 'antd/lib/radio';
 import Table from 'antd/lib/table';
+import Icon from 'antd/lib/icon';
 import 'antd/lib/button/style/css';
 import 'antd/lib/table/style/css';
 
@@ -23,6 +24,10 @@ const WordCardDiv = styled.div`
 const PageControlSearchContainer = styled.div`
 	display: flex;
 	align-items: center;
+`;
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 //----PageContainer Component -----//
 class PageContainer extends React.Component {
@@ -55,9 +60,17 @@ class PageContainer extends React.Component {
   }
   render() {
     let { pageData, numberOfPages } = this.props.pageInfo;
+    console.log(this.props.sideBarState)
     return (
       <div>
-        <h4>{this.props.wordListName}</h4>
+        <FlexContainer>
+          <Button size="small" type="primary" style={{marginRight: "15px"}}
+            onClick={() => this.props.onSetSideBarState(!this.props.sideBarState)}
+          >
+            {this.props.sideBarState ? <Icon type="right" /> : <Icon type="left" />}
+          </Button>
+          <h4>{this.props.wordListName}</h4>
+        </FlexContainer>
         <h6>{`Number Of Pages - ${numberOfPages}`}</h6>
         <Radio.Group value={this.state.viewType} onChange={(e) => this.setState({ viewType: e.target.value })}>
           <Radio.Button value="card">Cards View</Radio.Button>
@@ -122,6 +135,9 @@ PageContainer.propTypes = {
   onUpdateWordListIndex: PropTypes.func,
   /** Parms: wordListName(string), wordId(string), isFavorite(bool) */
   onUpdateFavorite: PropTypes.func,
+  /** Parms: isSideBarHidden(bool) */
+  onSetSideBarState: PropTypes.func,
+  sideBarState: PropTypes.bool,
   pageNumber: PropTypes.number,
   numberOfPages: PropTypes.number,
   pageInfo: PropTypes.object,

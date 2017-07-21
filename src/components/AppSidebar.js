@@ -18,7 +18,7 @@ const AppSidebar = (props) => {
 			// names must be equal
 			return 0;
 		});
-		
+
 		let returnArr = [];
 		arrayOfKeys.forEach(key => {
 			returnArr.push(func(obj[key], key));

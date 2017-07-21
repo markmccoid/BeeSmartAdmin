@@ -27518,6 +27518,7 @@ Object.defineProperty(exports, "__esModule", {
 var LOAD_WORD_LIST_INDEX = exports.LOAD_WORD_LIST_INDEX = 'LOAD_WORD_LIST_INDEX';
 var UPDATE_WORD_LIST_INDEX = exports.UPDATE_WORD_LIST_INDEX = 'UPDATE_WORD_LIST_INDEX';
 var SET_SELECTED_WORD_LIST = exports.SET_SELECTED_WORD_LIST = 'SET_SELECTED_WORD_LIST';
+var SET_SIDEBAR_STATE = exports.SET_SIDEBAR_STATE = 'SET_SIDEBAR_STATE';
 
 //----Word list Action Types ==------------------/
 var LOAD_WORD_LIST = exports.LOAD_WORD_LIST = 'LOAD_WORD_LIST';
@@ -36305,7 +36306,7 @@ module.exports = function bind(fn, thisArg) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setSelectedWordList = undefined;
+exports.setSideBarState = exports.setSelectedWordList = undefined;
 
 var _api = __webpack_require__(55);
 
@@ -36319,6 +36320,13 @@ var setSelectedWordList = exports.setSelectedWordList = function setSelectedWord
   return {
     type: _actionTypes.SET_SELECTED_WORD_LIST,
     wordList: wordList
+  };
+};
+
+var setSideBarState = exports.setSideBarState = function setSideBarState(isSideBarHidden) {
+  return {
+    type: _actionTypes.SET_SIDEBAR_STATE,
+    isSideBarHidden: isSideBarHidden
   };
 };
 
@@ -36336,7 +36344,8 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _templateObject = _taggedTemplateLiteral(['\n  display: flex;\n  flex-wrap: wrap;\n'], ['\n  display: flex;\n  flex-wrap: wrap;\n']),
-    _templateObject2 = _taggedTemplateLiteral(['\n\tdisplay: flex;\n\talign-items: center;\n'], ['\n\tdisplay: flex;\n\talign-items: center;\n']);
+    _templateObject2 = _taggedTemplateLiteral(['\n\tdisplay: flex;\n\talign-items: center;\n'], ['\n\tdisplay: flex;\n\talign-items: center;\n']),
+    _templateObject3 = _taggedTemplateLiteral(['\n  display: flex;\n  align-items: center;\n'], ['\n  display: flex;\n  align-items: center;\n']);
 
 var _react = __webpack_require__(1);
 
@@ -36367,6 +36376,10 @@ var _radio2 = _interopRequireDefault(_radio);
 var _table = __webpack_require__(144);
 
 var _table2 = _interopRequireDefault(_table);
+
+var _icon = __webpack_require__(46);
+
+var _icon2 = _interopRequireDefault(_icon);
 
 __webpack_require__(138);
 
@@ -36401,6 +36414,7 @@ function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defi
 //----Styled Components -----//
 var WordCardDiv = _styledComponents2.default.div(_templateObject);
 var PageControlSearchContainer = _styledComponents2.default.div(_templateObject2);
+var FlexContainer = _styledComponents2.default.div(_templateObject3);
 //----PageContainer Component -----//
 
 var PageContainer = function (_React$Component) {
@@ -36447,13 +36461,27 @@ var PageContainer = function (_React$Component) {
           pageData = _props$pageInfo.pageData,
           numberOfPages = _props$pageInfo.numberOfPages;
 
+      console.log(this.props.sideBarState);
       return _react2.default.createElement(
         'div',
         null,
         _react2.default.createElement(
-          'h4',
+          FlexContainer,
           null,
-          this.props.wordListName
+          _react2.default.createElement(
+            _button2.default,
+            { size: 'small', type: 'primary', style: { marginRight: "15px" },
+              onClick: function onClick() {
+                return _this2.props.onSetSideBarState(!_this2.props.sideBarState);
+              }
+            },
+            this.props.sideBarState ? _react2.default.createElement(_icon2.default, { type: 'right' }) : _react2.default.createElement(_icon2.default, { type: 'left' })
+          ),
+          _react2.default.createElement(
+            'h4',
+            null,
+            this.props.wordListName
+          )
         ),
         _react2.default.createElement(
           'h6',
@@ -36538,6 +36566,9 @@ PageContainer.propTypes = {
   onUpdateWordListIndex: _propTypes2.default.func,
   /** Parms: wordListName(string), wordId(string), isFavorite(bool) */
   onUpdateFavorite: _propTypes2.default.func,
+  /** Parms: isSideBarHidden(bool) */
+  onSetSideBarState: _propTypes2.default.func,
+  sideBarState: _propTypes2.default.bool,
   pageNumber: _propTypes2.default.number,
   numberOfPages: _propTypes2.default.number,
   pageInfo: _propTypes2.default.object,
@@ -59838,12 +59869,13 @@ var MainDisplay = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			var sideBarStateStyle = this.props.isSideBarHidden ? { display: "none" } : null;
 			return _react2.default.createElement(
 				'div',
 				{ className: 'content-container' },
 				_react2.default.createElement(
 					'nav',
-					{ className: 'content-nav' },
+					{ className: 'content-nav', style: sideBarStateStyle },
 					_react2.default.createElement(
 						'h5',
 						{ style: { textAlign: "center" } },
@@ -59870,12 +59902,14 @@ var MainDisplay = function (_React$Component) {
 var mapStateToProps = function mapStateToProps(state) {
 	return {
 		wordListIndex: state.wordListIndex,
-		selectedWordList: state.appState.selectedWordList || []
+		selectedWordList: state.appState.selectedWordList || [],
+		isSideBarHidden: state.appState.isSideBarHidden
 	};
 };
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, {
 	loadWordListIndex: _actions.startLoadWordListIndex
+
 })(MainDisplay);
 
 // <GroupCreator
@@ -60426,17 +60460,25 @@ var setupTableColumns = function setupTableColumns(onUpdateFavorite, wordListNam
       // index of row ${index}`);
       var wordId = record.key;
       return text ? _react2.default.createElement(
-        'button',
-        { onClick: function onClick() {
-            return onUpdateFavorite(wordListName, wordId, false);
-          } },
-        _react2.default.createElement(_icon2.default, { type: 'heart' })
+        'div',
+        null,
+        _react2.default.createElement(
+          'button',
+          { style: { width: "100%" }, onClick: function onClick() {
+              return onUpdateFavorite(wordListName, wordId, false);
+            } },
+          _react2.default.createElement(_icon2.default, { type: 'heart' })
+        )
       ) : _react2.default.createElement(
-        'button',
-        { onClick: function onClick() {
-            return onUpdateFavorite(wordListName, wordId, true);
-          } },
-        _react2.default.createElement(_icon2.default, { type: 'heart-o' })
+        'div',
+        null,
+        _react2.default.createElement(
+          'button',
+          { style: { width: "100%" }, onClick: function onClick() {
+              return onUpdateFavorite(wordListName, wordId, true);
+            } },
+          _react2.default.createElement(_icon2.default, { type: 'heart-o' })
+        )
       );
     }
   }, {
@@ -60448,7 +60490,7 @@ var setupTableColumns = function setupTableColumns(onUpdateFavorite, wordListNam
       // console.log(`cell (data content for this cell)${text}
       // row data ${record}
       // index of row ${index}`);
-      return text ? _react2.default.createElement(_icon2.default, { type: 'check' }) : null;
+      return text ? _react2.default.createElement(_icon2.default, { style: { width: "100%" }, type: 'check' }) : null;
     }
   }];
   return columns;
@@ -60728,6 +60770,9 @@ var WordListContainer = function (_React$Component) {
     }, _this.getPageData = function (currWordList, pageNumber, wordsPerPage) {
       //Filter words if needed
       var filteredWordList = (0, _helpers.filterWords)(currWordList, _this.state.searchText, _this.state.showNewWordsOnly, _this.state.showFavorites);
+      if (filteredWordList.length === 0) {
+        return { pageData: [{ id: '123', word: "NO WORDS FOUND" }], numberOfPages: 1 };
+      }
       //calculate how many pages
       var numberOfPages = Math.ceil(filteredWordList.length / wordsPerPage);
 
@@ -60793,6 +60838,8 @@ var WordListContainer = function (_React$Component) {
           onDeleteWords: this.props.deleteWords,
           onUpdateFavorite: this.props.updateFavorite,
           onUpdateWordListIndex: this.props.updateWordListIndex,
+          onSetSideBarState: this.props.setSideBarState,
+          sideBarState: this.props.appState.isSideBarHidden,
           searchText: this.state.searchText,
           showNewWordsOnly: this.state.showNewWordsOnly,
           showFavorites: this.state.showFavorites,
@@ -60825,7 +60872,8 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps, {
   setPageNumber: _actions.setPageNumber,
   savePageData: _actions.savePageData,
   updateWordListIndex: _actions.startUpdateWordListIndex,
-  updateFavorite: _actions.startUpdateFavorite
+  updateFavorite: _actions.startUpdateFavorite,
+  setSideBarState: _actions.setSideBarState
 })(WordListContainer);
 
 /***/ }),
@@ -61157,6 +61205,10 @@ var appStateReducer = exports.appStateReducer = function appStateReducer() {
 			return _extends({}, state, {
 				loadStatus: 'error',
 				loadError: action.error
+			});
+		case _actions.SET_SIDEBAR_STATE:
+			return _extends({}, state, {
+				isSideBarHidden: action.isSideBarHidden
 			});
 		default:
 			return state;

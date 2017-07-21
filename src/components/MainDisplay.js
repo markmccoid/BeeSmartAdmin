@@ -20,9 +20,10 @@ class MainDisplay extends React.Component {
 
 
 	render() {
+		let sideBarStateStyle = this.props.isSideBarHidden ? {display: "none"} : null;
 		return (
 			<div className="content-container">
-				<nav className="content-nav">
+				<nav className="content-nav" style={sideBarStateStyle}>
 					<h5 style={{textAlign: "center"}}>Word Lists</h5>
 					<AppSidebar
 						wordListIndex={this.props.wordListIndex}
@@ -39,12 +40,14 @@ class MainDisplay extends React.Component {
 const mapStateToProps = (state) => {
 	return {
 		wordListIndex: state.wordListIndex,
-		selectedWordList: state.appState.selectedWordList || []
+		selectedWordList: state.appState.selectedWordList || [],
+		isSideBarHidden: state.appState.isSideBarHidden
 	}
 };
 
 export default connect(mapStateToProps, {
-	loadWordListIndex: startLoadWordListIndex
+	loadWordListIndex: startLoadWordListIndex,
+
 })(MainDisplay);
 
 

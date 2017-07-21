@@ -2,6 +2,7 @@
 export const LOAD_WORD_LIST_INDEX = 'LOAD_WORD_LIST_INDEX';
 export const UPDATE_WORD_LIST_INDEX = 'UPDATE_WORD_LIST_INDEX';
 export const SET_SELECTED_WORD_LIST = 'SET_SELECTED_WORD_LIST';
+export const SET_SIDEBAR_STATE = 'SET_SIDEBAR_STATE';
 
 //----Word list Action Types ==------------------/
 export const LOAD_WORD_LIST = 'LOAD_WORD_LIST';

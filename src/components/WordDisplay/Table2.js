@@ -57,9 +57,9 @@ const setupTableColumns = (onUpdateFavorite, wordListName) => {
       // index of row ${index}`);
       let wordId = record.key;
       return (text ?
-        <button onClick={() => onUpdateFavorite(wordListName, wordId, false)}><Icon type="heart" /></button>
+        <div><button style={{width:"100%"}} onClick={() => onUpdateFavorite(wordListName, wordId, false)}><Icon type="heart" /></button></div>
         :
-        <button onClick={() => onUpdateFavorite(wordListName, wordId, true)}><Icon type="heart-o" /></button>);
+        <div><button style={{width:"100%"}} onClick={() => onUpdateFavorite(wordListName, wordId, true)}><Icon type="heart-o" /></button></div>);
     }
   },{
     title: 'New Word?',
@@ -70,7 +70,7 @@ const setupTableColumns = (onUpdateFavorite, wordListName) => {
       // console.log(`cell (data content for this cell)${text}
       // row data ${record}
       // index of row ${index}`);
-      return (text ? <Icon type="check" /> : null);
+      return (text ? <Icon style={{width:"100%"}} type="check" /> : null);
     }
   }];
   return columns;
