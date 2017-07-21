@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Table from 'antd/lib/table';
 import Icon from 'antd/lib/icon';
+import Radio from 'antd/lib/radio';
 import 'antd/lib/table/style/css';
+import 'antd/lib/button/style/css';
 
 //----Styled Components -----//
 const WordCardDiv = styled.div`
@@ -92,36 +94,50 @@ const getRowConfig = (onDeleteToggle, idsToDelete) => {
     }
   }
 }
-const Table2 = (props) => {
-  let rowClassName = [];
-  //--create antd needed props
-  const tableData = formatDataForTable(props.pageData);
-  const tableColumns = setupTableColumns(props.onUpdateFavorite, props.wordListName);
-  const rowSelectionConfig = getRowConfig(props.onDeleteToggle, props.idsToDelete);
-  const getRowClassName = (record, index) => {
-    //console.log('rowclassName', record);
-    let rowClass = ''
-    if (props.idsToDelete.filter(id => id === record.key).length > 0) {
-      rowClass = 'row-selected';
+class Table2 extends React.Component {
+  state = {
+    fontsize: "large"
+  };
+  render() {
+    let rowClassName = [];
+    //--create antd needed this.props
+    const tableData = formatDataForTable(this.props.pageData);
+    const tableColumns = setupTableColumns(this.props.onUpdateFavorite, this.props.wordListName);
+    const rowSelectionConfig = getRowConfig(this.props.onDeleteToggle, this.props.idsToDelete);
+    const getRowClassName = (record, index) => {
+      //console.log('rowclassName', record);
+      let rowClass = ''
+      if (this.props.idsToDelete.filter(id => id === record.key).length > 0) {
+        rowClass = 'row-selected';
+      }
+
+      let newWordClass = record.isNewWord ? 'new-word' : '';
+      let fontsizeClass = this.state.fontsize === 'small' ? 'row-size-small' :
+                          this.state.fontsize === 'medium' ? 'row-size-medium' : 'row-size-large';
+      return `${rowClass} ${newWordClass} ${fontsizeClass}`;
     }
+    let table2JSX = <Table
+              dataSource={tableData}
+              columns={tableColumns}
+              pagination={false}
+              size='small'
+              bordered
+              rowSelection={rowSelectionConfig}
+              rowClassName={getRowClassName}
+            />;
 
-    let newWordClass = record.isNewWord ? 'new-word' : '';
-    return `${rowClass} ${newWordClass}`;
+    return (
+        <div>
+          <Radio.Group value={this.state.fontsize} onChange={(e) => this.setState({ fontsize: e.target.value })}>
+            <Radio.Button value="small">Small</Radio.Button>
+            <Radio.Button value="medium">Medium</Radio.Button>
+            <Radio.Button value="large">Large</Radio.Button>
+          </Radio.Group>
+          {table2JSX}
+        </div>
+    );
   }
-  let table2JSX = <Table
-            dataSource={tableData}
-            columns={tableColumns}
-            pagination={false}
-            size='small'
-            bordered
-            rowSelection={rowSelectionConfig}
-            rowClassName={getRowClassName}
-          />;
-
-  return (
-      <div>{table2JSX}</div>
-  );
-};
+}
 
 Table2.propTypes = {
   pageData: PropTypes.array,

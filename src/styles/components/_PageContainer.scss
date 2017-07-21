@@ -6,6 +6,12 @@
 .row-selected {
   background-color: #ff8e8e !important;
 }
-.ant-table-row {
+.row-size-small {
+  font-size: 12px;
+}
+.row-size-medium {
+  font-size: 14px;
+}
+.row-size-large {
   font-size: 18px;
 }
