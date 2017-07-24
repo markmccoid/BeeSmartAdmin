@@ -3,4 +3,3 @@ dataFiles/
 dist/
 public/bundle.js
 .editorconfig
-*.bmpr
