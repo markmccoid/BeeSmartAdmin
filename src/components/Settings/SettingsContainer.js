@@ -8,6 +8,8 @@ const OuterDiv = styled.div`
     display: flex;
     flex-direction: column;
     margin: 20px;
+    padding: 10px;
+    border: 1px solid gray;
 `;
 const Label = styled.div`
   font-size: 14px;

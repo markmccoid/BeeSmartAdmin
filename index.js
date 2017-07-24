@@ -19,7 +19,7 @@ console.log(process.env.NODE_ENV);
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 960,
-		title: "Bee Smart",
+		title: "Bee Smart Admin",
 		icon: path.join(__dirname, 'assets/icon.ico'),
 		webPreferences : { backgroundThrottling: false }
   });
