@@ -30,17 +30,20 @@ export const getWordListIndex = () => {
 
 //--------------------------------------------------------
 //Get a single word list's data
+//response will be an object {wordListData, currPageNumber}
+//The currPageNumber is pulled from the wordListIndex
 export const getWordList = wordListName => {
 	return nfa.getWordList(wordListName)
 		.then(response => {
+			let wordListData = response.wordListData;
 			//check to see if isFavorite property exists, if not add it as false
-			Object.keys(response).forEach(obj => {
-				if(!response[obj].hasOwnProperty('isFavorite')) {
-					response[obj].isFavorite = false;
+			Object.keys(wordListData).forEach(obj => {
+				if(!wordListData[obj].hasOwnProperty('isFavorite')) {
+					wordListData[obj].isFavorite = false;
 				}
 			});
 			//need to deal with error responses i.e. wordList that doesn't exist.
-			return response;
+			return {wordListData, currPageNumber: response.currPageNumber};
 		});
 };
 

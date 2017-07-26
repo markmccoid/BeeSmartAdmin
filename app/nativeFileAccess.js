@@ -68,7 +68,15 @@ const saveWordsPerPage = wordsPerPage => {
 const getWordList = wordListName => {
   return readFilePromise(`${getLocalFile(wordListName)}.json`)
     .then (data => {
-    return _.sortBy(JSON.parse(data), 'word');
+      //get the page number if set in wordListIndex
+      return getWordListIndexEntry(wordListName)
+        .then(WLIData => {
+          let returnObj = {
+              wordListData: _.sortBy(JSON.parse(data), 'word'),
+              currPageNumber: WLIData.currPageNumber
+            };
+          return returnObj;
+        });
     });
 };
 //--------------------
@@ -145,9 +153,22 @@ const updateWordListIndex = (wordListName, newCount) => {
       return {status: 200};
   });
 };
+//--Return the wordListIndex entry for the wordListName passed
+//--Also check for currPageNumber property and if not there set to 1
+const getWordListIndexEntry = wordListName => {
+  return readFilePromise(getLocalFile(WORD_LIST_INDEX))
+    .then(data => {
+      data = JSON.parse(data);
+      let wordListIndexEntry = data[wordListName] || {};
+      if (!wordListIndexEntry.hasOwnProperty('currPageNumber')) {
+        wordListIndexEntry = Object.assign({}, wordListIndexEntry, {currPageNumber: 1});
+      }
+      return wordListIndexEntry;
+    });
+};
 
+//--Save page number to the WordListIndex for the wordListName passed
 const savePageNumber = (pageNumber, wordListName) => {
-  console.log('spn',wordListName)
   wliFileName = getLocalFile(WORD_LIST_INDEX);
   return readFilePromise(wliFileName)
     .then(data => {

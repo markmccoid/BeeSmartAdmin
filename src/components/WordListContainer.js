@@ -55,8 +55,8 @@ class WordListContainer extends React.Component {
     });
   }
   render() {
-    let currPageNumber  = this.props.currWordListIndex.hasOwnProperty('currPageNumber') ? this.props.currWordListIndex.currPageNumber : 1;
-    console.log('WordListCon', currPageNumber);
+    // let currPageNumber  = this.props.currWordListIndex.hasOwnProperty('currPageNumber') ? this.props.currWordListIndex.currPageNumber : 1;
+    // console.log('WordListCon', currPageNumber);
     let { loadStatus, loadError } = this.props.appState;
 		let { wordList } = this.props.match.params;
 		let { pageNumber } = this.props.currPage || {pageNumber: 1};
@@ -66,7 +66,7 @@ class WordListContainer extends React.Component {
       let pageInfo = this.getPageData(this.props.currWordList, pageNumber, wordPerPage);
       wordListJSX = (
         <PageContainer
-          pageNumber={currPageNumber}
+          pageNumber={pageNumber}
           numberOfPages={pageInfo.numberOfPages}
           pageInfo={pageInfo}
           wordListName={wordList}

@@ -22,14 +22,14 @@ export const startLoadWordList = wordListName => {
 	return dispatch => {
 		//Set the appState to the word list selected
 		dispatch(setSelectedWordList(wordListName));
-		//reset page number to 1
-		dispatch({type: SET_PAGE_NUMBER, pageNumber: 1})
 		//Set the loading flag for the wordlist
 		dispatch({type: WORD_LIST_LOADING});
 		//Get list of Applications in the QVVariables.json file on server
 		const request = api.getWordList(wordListName);
 			request.then(data => {
-				dispatch(loadWordList(data));
+				dispatch(loadWordList(data.wordListData));
+				//reset page number to either 1 or what was set in WLI
+				dispatch({type: SET_PAGE_NUMBER, pageNumber: data.currPageNumber})
 				dispatch({type: WORD_LIST_LOAD_SUCCESS});
 			})
 			.catch(err => {
