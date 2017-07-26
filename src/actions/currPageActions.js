@@ -10,9 +10,18 @@ export const savePageData = pageData => {
   };
 };
 
-export const setPageNumber = pageNumber => {
-	return {
-		type: SET_PAGE_NUMBER,
-		pageNumber
-	};
+// export const setPageNumber = pageNumber => {
+// 	return {
+// 		type: SET_PAGE_NUMBER,
+// 		pageNumber
+// 	};
+// };
+
+export const setPageNumber = (pageNumber, wordListName) => {
+  console.log('setPageNumber Action', wordListName)
+	return dispatch => {
+    api.savePageNumber(pageNumber, wordListName)
+      .then(data =>  dispatch({type: SET_PAGE_NUMBER, pageNumber: pageNumber})
+      );
+  };
 };

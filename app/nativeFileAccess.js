@@ -145,6 +145,26 @@ const updateWordListIndex = (wordListName, newCount) => {
       return {status: 200};
   });
 };
+
+const savePageNumber = (pageNumber, wordListName) => {
+  console.log('spn',wordListName)
+  wliFileName = getLocalFile(WORD_LIST_INDEX);
+  return readFilePromise(wliFileName)
+    .then(data => {
+      data = JSON.parse(data);
+      let newWordListObj = Object.assign({}, data[wordListName], {currPageNumber: pageNumber});
+			//reconstruct state replacing the wordListName entry with the updated one.
+			let newWordListIndex = Object.assign({}, data, {[wordListName]: newWordListObj});
+
+      fs.writeFile(`${wliFileName}`, JSON.stringify(newWordListIndex), (err) => {
+        if (err) {
+          console.log(`Error writing ${wliFileName}!`, err);
+        }
+        console.log(`${wliFileName} written successfully!`);
+      });
+      return {status: 200};
+  });
+};
 //--Exports the functions to be used in the application
 module.exports = {
 	getWordListIndex,
@@ -153,5 +173,6 @@ module.exports = {
   getSettings,
   saveWordsPerPage,
   updateWordListIndex,
-  updateIsFavorite
+  updateIsFavorite,
+  savePageNumber
 }

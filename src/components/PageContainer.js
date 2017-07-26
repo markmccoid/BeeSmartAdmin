@@ -53,14 +53,13 @@ class PageContainer extends React.Component {
     this.setState({idsToDelete: idArray});
   }
 
-  handlePageChange = pageNumber => {
+  handlePageChange = (pageNumber, wordListName) => {
     pageNumber = pageNumber < 1 ? 1 : pageNumber;
     pageNumber = pageNumber > this.props.numberOfPages ? this.props.numberOfPages : pageNumber;
-    this.props.onSetPageNumber(pageNumber);
+    this.props.onSetPageNumber(pageNumber, wordListName);
   }
   render() {
     let { pageData, numberOfPages } = this.props.pageInfo;
-    console.log(this.props.sideBarState)
     return (
       <div>
         <FlexContainer>
@@ -77,15 +76,17 @@ class PageContainer extends React.Component {
           <Radio.Button value="table">Table View</Radio.Button>
         </Radio.Group>
         <PageControlSearchContainer>
-        	<PageControl pageNumber={this.props.pageNumber} onPageChange={this.handlePageChange} />
+        	<PageControl pageNumber={this.props.pageNumber} onPageChange={this.handlePageChange} wordListName={this.props.wordListName} />
         	<Search
             onFilterWords={this.props.onFilterWords}
             searchText={this.props.searchText}
             showNewWordsOnly={this.props.showNewWordsOnly}
             showFavorites={this.props.showFavorites}
           />
-				<button
-          className={this.state.idsToDelete.length > 0 ? "button primary" : "button primary disabled"}
+        </PageControlSearchContainer>
+        <button
+          className={this.state.idsToDelete.length > 0 ? "button primary small" : "button primary disabled small"}
+          style={{marginBottom: "10px"}}
           onClick={() => {
                 this.props.onDeleteWords(this.props.wordListName, this.state.idsToDelete);
                 this.props.onUpdateWordListIndex(this.props.wordListName, this.props.wordCount - this.state.idsToDelete.length);
@@ -94,8 +95,6 @@ class PageContainer extends React.Component {
         >
           Delete Selected
         </button>
-
-        </PageControlSearchContainer>
         {this.state.viewType === 'table' ?
           <Table2
             pageData={pageData}
@@ -118,8 +117,19 @@ class PageContainer extends React.Component {
         }
         <br />
         <PageControlSearchContainer>
-          <PageControl pageNumber={this.props.pageNumber} onPageChange={this.handlePageChange} />
+          <PageControl pageNumber={this.props.pageNumber} onPageChange={this.handlePageChange} wordListName={this.props.wordListName} />
         </PageControlSearchContainer>
+        <button
+          className={this.state.idsToDelete.length > 0 ? "button primary small" : "button primary disabled small"}
+          style={{marginTop: "10px"}}
+          onClick={() => {
+                this.props.onDeleteWords(this.props.wordListName, this.state.idsToDelete);
+                this.props.onUpdateWordListIndex(this.props.wordListName, this.props.wordCount - this.state.idsToDelete.length);
+              }
+            }
+        >
+          Delete Selected
+        </button>
       </div>
     );
   }

@@ -72,3 +72,10 @@ export const updateIsFavorite = (wordListName, wordId, isFavorite) => {
 			return response;
 		});
 };
+
+export const savePageNumber = (pageNumber, wordListName) => {
+	return nfa.savePageNumber(pageNumber, wordListName)
+		.then(response => {
+			return response;
+		});
+};

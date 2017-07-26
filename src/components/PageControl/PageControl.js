@@ -29,14 +29,14 @@ const PageControl = (props) => {
     //validate that it is a number
     if (pageNumber == parseInt(pageNumber) && parseInt(pageNumber) > 0) {
       //This will call a redux action creator and update the page number in the store
-      props.onPageChange(parseInt(pageNumber));
+      props.onPageChange(parseInt(pageNumber), props.wordListName);
     } else {
       alert ('Please enter a positive integer for the page number');
     }
   };
   return (
     <Wrapper>
-      <Button onClick={() => props.onPageChange(props.pageNumber-1)}
+      <Button onClick={() => props.onPageChange(props.pageNumber-1, props.wordListName)}
       >
         Prev
       </Button>
@@ -44,7 +44,7 @@ const PageControl = (props) => {
         inputPageNumber={props.pageNumber}
         onEnterPressed={handleSearch}
       />
-      <Button onClick={() => props.onPageChange(props.pageNumber+1)}
+      <Button onClick={() => props.onPageChange(props.pageNumber+1, props.wordListName)}
       >
         Next
       </Button>
@@ -54,7 +54,8 @@ const PageControl = (props) => {
 
 PageControl.propTypes = {
   onPageChange: PropTypes.func,
-  pageNumber: PropTypes.number
+  pageNumber: PropTypes.number,
+  wordListName: PropTypes.string
 };
 
 export default PageControl;
