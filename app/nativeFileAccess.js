@@ -72,7 +72,7 @@ const getWordList = wordListName => {
       return getWordListIndexEntry(wordListName)
         .then(WLIData => {
           let returnObj = {
-              wordListData: _.sortBy(JSON.parse(data), 'word'),
+              wordListData: _.sortBy(JSON.parse(data), obj => obj.word.toLowerCase()), //_.sortBy(JSON.parse(data), 'word'),
               currPageNumber: WLIData.currPageNumber
             };
           return returnObj;
